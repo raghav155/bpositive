@@ -1,0 +1,196 @@
+<% include partials/header.ejs%>
+<title>Bpositive</title>
+</head>
+<body>
+
+<div class="navbar">
+    <div class="ui grid" style="height: 70px">
+        <div class="eight wide column" style="height : 70px">
+            <a href="/"><img style="margin-left : 60px;margin-top:10px" src="/bpositive.jpg" alt="logo" width="150px" height="50px"></a>
+        </div>
+        <div class="eight wide column">
+            <%if(user != null){ %>
+                <div style="margin-top: 20px;float: right;margin-right: 80px;" >
+                    <div style="text-transform: capitalize" id="sidebarBtn" class="text"> <i class="list layout icon"></i>
+                        <%= user.fname%>&nbsp;<%= user.sname%>
+                    </div>
+                    <div class="ui sidebar right inverted vertical menu">
+                        <a href="/profile" class="item">
+                            <i class="doctor icon"></i>
+                            Profile
+                        </a>
+                        <a href="#" class="item">
+                            <i class="tasks icon"></i>
+                            My Appointments
+                        </a>
+                        <a href="#" class="item">
+                            <i class="edit icon"></i>
+                            Edit/Update Profile
+                        </a>
+                        <a href="/logout" class="item">
+                            <i class="sign out icon"></i>
+                            Logout
+                        </a>
+                    </div>
+                    <div class="pusher">
+                         <!-- Site content !-->
+                    </div>
+                </div>
+            <%}else{%>
+            <div style="margin-top: 10px;float: right;margin-right: 60px" class="ui buttons">
+                <button style="border-radius: 0px" id="loginBtn" class="ui button red">Login</button>
+                    <div class="or"></div>
+                <button style="border-radius: 0px" id="signUpBtn" class="ui teal button">Sign Up</button>
+            </div>
+            <%}%>
+            <a href="/healthfeed" style="float: right;margin-top: 20px;margin-right: 30px;color: black">Read Health Articles</a>
+        </div>
+    </div>
+</div>
+
+<div style="background-image: url('/rawpixel-611110-unsplash.jpg');height: 500px;margin-top: 20px;background-size: cover" >
+    <h1 style="color: white;padding: 50px;text-align: center;letter-spacing: 2px;font-size: 45px">Your home for health</h1>
+    <div style="text-align: center">
+        <h1 style="color: white;letter-spacing: 2px">Find and Book</h1>
+        <div style="margin-top: 30px;width: 800px" class="ui huge action input">
+            <div style="width: 800px;border-radius: 0px" class="ui dropdown selection">
+                <div class="default text">Search doctors, clinic, hospitals</div>
+                <div class="menu">
+                    <div class="item" data-value="Dentist">
+                    <img style="margin-top: 1px" class="ui mini avatar image" src="/images.png">
+                    Dentist
+                    </div>
+                    <div class="item" data-value="Opthalmologist">
+                    <img style="margin-top: 1px" class="ui mini avatar image" src="/images.png">
+                    Opthalmologist
+                    </div>
+                    <div class="item" data-value="Psychiatrist">
+                    <img style="margin-top: 1px" class="ui mini avatar image" src="/images.png">
+                    Psychiatrist
+                    </div>
+                    <div class="item" data-value="Pediatrician">
+                    <img style="margin-top: 1px" class="ui mini avatar image" src="/images.png">
+                    Pediatrician
+                    </div>
+                    <div class="item" data-value="Homoeopath">
+                    <img style="margin-top: 1px" class="ui mini avatar image" src="/images.png">
+                    Homoeopath
+                    </div>
+                    <div class="item" data-value="Gastroenterologist">
+                    <img style="margin-top: 1px" class="ui mini avatar image" src="/images.png">
+                    Gastroenterologist
+                    </div>
+                    <div class="item" data-value="ENT">
+                    <img style="margin-top: 1px" class="ui mini avatar image" src="/images.png">
+                    ENT
+                    </div>
+                    <div class="item" data-value="Neurosurgeon">
+                    <img style="margin-top: 1px" class="ui mini avatar image" src="/images.png">
+                    Neurosurgeon
+                    </div>
+                    <div class="item" data-value="Gynaecology">
+                    <img style="margin-top: 1px" class="ui mini avatar image" src="/images.png">
+                    Gynaecology
+                    </div>
+                    <div class="item" data-value="Physician">
+                    <img style="margin-top: 1px" class="ui mini avatar image" src="/images.png">
+                    Physician
+                    </div>
+                </div>
+            </div>
+            <form id="submitForm" style="display: none" action="" method="get">
+                <input id="submitInput" type="text">
+            </form>
+            <button style="border-radius: 0px" id="searchBtn" class="ui teal right labeled icon button">
+                <i class="search icon"></i>
+                  Search
+            </button>
+        </div>
+    </div>
+</div>
+
+<div style="margin-bottom: 30px">
+    <div style="padding: 50px 150px 50px 150px;" id="articles">
+        <h1 style="text-align: center;margin-bottom: 40px;font-size: 40px">Read top articles and health news from experts</h1>
+        <div id="articleLoader" class="ui active centered inline loader">
+                <div class="ui text loader">Loading</div>
+        </div>
+
+        
+    </div>
+    <button id="moreArticles" style="margin-left: 45%;color: white;background-color: #14bef0;border-radius: 0px;display: none" class="ui button">More Articles</button>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.3/semantic.js"></script>
+<script src="/js/customjs.js"></script>
+<script>
+    $('.dropdown')
+     .dropdown()
+     ;
+
+     let practice = "";
+     $('.item').click(function(){
+         practice = $(this).attr('data-value');
+     });
+
+     $('#searchBtn').click(function(){
+         if(practice != ''){
+            $('#submitInput').val(practice);
+            $('#submitForm').attr('action','/search/' + practice);
+            $('#submitForm').submit();
+         }
+     });
+
+
+     $.get('https://newsapi.org/v2/everything?language=en&q="health"&sortBy=relavancy&pageSize=6&apiKey=b997b94e71284df4980207822bbba1d2',function(data,status){
+         let appendable = "";
+         for(let i=0;i<data.articles.length && i < 6 ;i++){
+            let app= `
+                    <div style="width:333px" class="card animated zoomIn delay-2s">
+                    <div class="blurring dimmable image">
+                    <div class="ui dimmer">
+                        <div class="content">
+                        <div class="center">
+                            <a target="_blank" href=${data.articles[i].url} class="ui inverted button">Read More</a>
+                        </div>
+                        </div>
+                    </div>
+                    <img style="max-height:200px;min-height:200px" src=${data.articles[i].urlToImage}>
+                    </div>
+                    <div class="content">
+                    <a href=${data.articles[i].url} target="_blank" class="header">${data.articles[i].title}</a>
+                    <div style="padding-top:1em" class="meta">
+                        <span class="date">${data.articles[i].author}</span>
+                    </div>
+                    <div class="description">
+                        ${data.articles[i].content}...
+                    </div>
+                    </div>
+                </div>
+            `;
+
+                appendable += app;
+            }
+
+            
+             let finalAppend = `
+                        <div class="ui fluid special cards">
+                            ${appendable}
+                        </div>
+
+             `;
+
+             $('#articleLoader').css('display','none');
+             $('#moreArticles').css('display','block');
+             $('#articles').append(finalAppend);
+             $('.special.cards .image').dimmer({
+                on: 'hover'
+            });
+         
+     });
+
+    $('#moreArticles').click(function(){
+        window.location = "/healthfeed"
+    })
+</script>
+<% include partials/footer.ejs%>

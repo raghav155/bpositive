@@ -1,0 +1,138 @@
+<% include partials/header.ejs%>
+<title>Dashboard</title>
+</head>
+<body>
+<div style="border-radius : 0px" class="ui inverted menu">
+
+  <a style="padding: 25px;color:white">
+    <span class="itemc activec" style="cursor:pointer"><i style="font-size: 20px" class="dashboard icon"></i> Dashboard</span>
+  </a>
+  <a href="/logout_doctor" style="padding: 25px;color:rgba(255, 255, 255, 0.6)">
+    <span class="itemc" style="cursor:pointer"><i style="font-size: 20px" class="user icon"></i> Logout</span>
+  </a>
+
+  <img doc-id="<%= user.id%>" id="doc-logo" style="position:relative;right:-73%;height:60px;margin-top:5px;cursor:pointer" class="ui tiny image" src="/images/uploads/<%= user.fileName%>">
+</div>
+
+<div style="height:100%" class="ui grid">
+  <div style="background-color:#34495e" class="two wide column">
+    <div id="feedbacks" class="mitem mactive" style="padding:25px;text-align:center;color:white"><i style="font-size:250%" class="mail outline icon"></i><p style="cursor:pointer">Feedbacks</p></div>
+    <div id="appointments" class="mitem" style="padding:25px;text-align:center;color:rgba(255, 255, 255, 0.6)"><i style="font-size:250%" class="inbox icon"></i><p style="cursor:pointer">Appointments</p></div>
+    <div id="chats" class="mitem" style="padding:25px;text-align:center;color:rgba(255, 255, 255, 0.6)"><i style="font-size:250%" class="chat outline icon"></i><p style="cursor:pointer">Chat</p></div>
+  </div>
+<div style="padding:0px;overflow-y:scroll" class="fourteen wide column">
+
+  <div id="feeds" style="background: white;width: 100%;padding-bottom: 20px;margin-top:15px">
+      <% if(feedbacks.length > 0){%>
+          <% for(let i=feedbacks.length-1;i>=0;i--){ %>
+              <div class="ui grid animated fadeIn delay-2s" style="position: relative;left: 14px;background: white;width: 100%;min-height: 250px;padding: 0px 25px 25px 25px">
+                    <div style="padding: 10px;border-bottom: 1px solid #f0f0f5" class="two wide column">
+                        <% if(feedbacks[i].provider == 'google'){%>
+                          <img style="border-radius: 50%;margin-left: 10px;margin-top: 10px" width="50%" src="<%=feedbacks[i].profilepic%>">
+                        <%}else{%>
+                          <img style="border-radius: 50%;margin-left: 10px;margin-top: 10px" width="50%" src="/images/uploads/<%=feedbacks[i].profilepic%>">
+                        <%}%>
+                    </div>
+                    <div style="padding: 20px 0px 0px 10px;color: #414146;border-bottom: 1px solid #f0f0f5" class="fourteen wide column">
+                        <h4 style="color: #787887;text-transform: capitalize"><%= feedbacks[i].uid%> (verified)
+                        </h4>
+                        <h3 style="margin-top: 20px;text-transform: capitalize;color: #414146"><%= feedbacks[i].problem%></h3>
+    
+                        <% if(feedbacks[i].rating >= 3){%>
+                          <p style="letter-spacing: .2px;margin-top: 20px"><i style="color: green" class="thumbs up icon"></i>  I recommend the doctor</p>
+                        <%}else{%>
+                          <p style="letter-spacing: .2px;margin-top: 20px"><i style="color: red" class="thumbs down icon"></i>  I don't recommend the doctor</p>
+                        <%}%>
+                        <p style="color: #414146;padding: 0px 10px 10px 0px;font-size: 14px;letter-spacing: .3px;margin-top: 20px"><%= feedbacks[i].experience%></p>
+                    </div>
+                </div>
+                           
+          <%}%>
+        <%}%>               
+  </div>
+
+</div>
+</div>
+<audio id="s1" src="/sounds/inquisitiveness.mp3"></audio>
+
+
+
+
+
+
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.3/semantic.js"></script>
+<script src="/js/socket-io.js"></script>
+<script src="/js/customjs.js"></script>
+<script>
+$('.itemc').mouseover(function() {
+        $(this).css({"color" : "white"});
+    }).mouseout(function() {
+        $(this).css({"color" : "rgba(255, 255, 255, 0.6)"});
+        $('.activec').css("color","white");
+});
+$('.mitem').mouseover(function() {
+        $(this).css({"color" : "white"});
+    }).mouseout(function() {
+        $(this).css({"color" : "rgba(255, 255, 255, 0.6)"});
+        $('.mactive').css("color","white");
+});
+$('#doc-logo').click(function(){
+    window.location = "/dashboard/profile"
+});
+
+$('#feedbacks').click(function(){
+    window.location = '/dashboard';
+});
+$('#appointments').click(function(){
+    window.location = '/dashboard/appointments';
+});
+$('#chats').click(function(){
+    window.location = '/dashboard/chats';
+});
+let id = $('#doc-logo').attr('doc-id');
+var socket = io('127.0.0.1:4000',{
+    query : {
+      id : id
+    }
+});
+
+socket.on('feedDone',function(data){
+  let pp = data.provider == 'google' ? data.pic : ('/images/uploads/' + data.pic);
+  let stars = '';
+
+  if(data.rating >= 3){
+      stars = `<p style="letter-spacing: .2px;margin-top: 20px"><i style="color: green" class="thumbs up icon"></i>  I recommend the doctor</p>`;
+  }else{
+      stars = `<p style="letter-spacing: .2px;margin-top: 20px"><i style="color: red" class="thumbs down icon"></i>  I don't recommend the doctor</p>`;
+  }
+
+  let feed = `
+    <div class="ui grid animated fadeIn delay-2s" style="position: relative;left: 14px;background: white;width: 100%;min-height: 250px;padding: 0px 25px 25px 25px">
+          <div style="padding: 10px;border-bottom: 1px solid #f0f0f5" class="two wide column">
+            <img style="border-radius: 50%;margin-left: 10px;margin-top: 10px" width="50%" src=${pp}>                    
+          </div>
+        <div style="padding: 20px 0px 0px 10px;color: #414146;border-bottom: 1px solid #f0f0f5" class="fourteen wide column">
+            <h4 style="color: #787887;text-transform: capitalize">${data.doc_fname} ${data.doc_sname} (verified)
+            <a style="margin-left:1.5em" class="ui red tag label">New</a>
+            </h4>
+            <h3 style="margin-top: 20px;text-transform: capitalize;color: #414146">
+            ${data.problem}
+            </h3>`+stars+
+            `<p style="color: #414146;padding: 0px 10px 10px 0px;font-size: 14px;letter-spacing: .3px;margin-top: 20px">
+            ${data.experience}
+            </p>
+        </div>
+    </div> 
+  `;
+
+  $('#feeds').prepend(feed);
+  document.getElementById("s1").volume = 0.4;
+  $('#s1')[0].play();
+})
+
+</script>
+<% include partials/footer.ejs%>

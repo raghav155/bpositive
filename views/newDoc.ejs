@@ -1,0 +1,160 @@
+<% include partials/header.ejs%>
+<title>Data shi se daal diyo</title>
+</head>
+<body>
+
+    <%if(errMessage.length > 0){%>
+        <div style="text-align: center; margin: 20px auto;padding: 30px; width: 60%; font-size: 20px" class="ui red inverted segment">
+            <%= errMessage%>
+        </div>
+    <%}%>
+    <%if(successMessage.length > 0){%>
+        <div style="text-align: center; margin: 20px auto;padding: 30px; width: 60%; font-size: 20px" class="ui green inverted segment">
+            <%= successMessage%>
+        </div>
+    <%}%>
+    <div style="width: 60%;margin: 50px auto;text-align: center;padding: 30px;border: lightgray solid 1px">
+            <form id="docData" class="ui form" action="/submitDocData" method="POST" enctype="multipart/form-data">
+                    <h4 class="ui dividing header">Doctor Information</h4>
+                    <div class="field required">
+                      <label>Name</label>
+                      <div class="two fields">
+                        <div class="field required">
+                          <input name="fname" placeholder="First Name" type="text" required>
+                        </div>
+                        <div class="field required">
+                          <input name="sname" placeholder="Last Name" type="text" required>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="field required">
+                      <label>Full Address</label>
+                      <div class="fields">
+                        <div class="sixteen wide field required">
+                          <input name="address" placeholder="Street Address" type="text" required>
+                        </div>
+                        <!-- <div class="four wide field">
+                          <input name="shipping[address-2]" placeholder="Apt #" type="text">
+                        </div> -->
+                      </div>
+                    </div>
+                    
+                    <div class="two fields">
+                        <div class="field required">
+                            <label>Practice</label>
+                            <input name="practice" placeholder="Practice" type="text" required>
+                        </div>
+                        <div class="field required">
+                            <label>Short Details</label>
+                            <input name="sdetails" placeholder="Short Details" type="text" required>
+                        </div>
+                    </div>
+
+                    <div class="two fields">
+                        <div class="field required">
+                            <label>Extension</label>
+                            <input name="extension" placeholder="Extension" type="text" required>
+                        </div>
+                        <div class="field required">
+                            <label>Phone Number</label>
+                            <input name="pnum" placeholder="Phone Number" type="text" required>
+                        </div>
+                    </div>
+
+                    <div class="field required">
+                        <label>About Doctor</label>
+                        <textarea name="about" rows="2" required></textarea>
+                    </div>
+
+                    <div class="three fields">
+                        <div class="field required">
+                              <label>Housing name</label>
+                              <input name="housing" placeholder="Housing Name" type="text" required>
+                        </div>
+                        <div class="field required">
+                            <label>Timing(Mon-Sat)</label>
+                            <input name="timingMS" placeholder="Timing" type="text" required>
+                        </div>
+                        <div class="field required">
+                            <label>Timing(Sun-If Any)</label>
+                            <input name="timingS" placeholder="Timing" type="text" required>
+                        </div>
+                    </div>
+
+                    <div class="three fields">
+                        <div class="field required">
+                            <label>Price</label>
+                            <input name="price" placeholder="Price" type="text" required>
+                        </div>
+                        <div class="field required">
+                            <label>Longitude</label>
+                            <input name="longitude" placeholder="Longitude" type="text" required>
+                        </div>
+                        <div class="field required">
+                            <label>Latitude</label>
+                            <input name="latitude" placeholder="Latitude" type="text" required>
+                        </div>
+                    </div>
+
+                    <div class="two fields">
+                        <div class="field required">
+                            <label>Services</label>
+                            <textarea name="services" placeholder="services(seperated by ;)" type="text" rows="2" required></textarea>
+                        </div>
+                        <div class="field required">
+                            <label>Specializations</label>
+                            <textarea name="specializations" placeholder="Specializations(seperated by ;)" type="text" rows="2" required></textarea>
+                        </div>
+                    </div>
+
+                    <div class="two fields">
+                        <div class="field required">
+                            <label>Awards and Recognitions</label>
+                            <textarea name="awards" placeholder="Awards and Recognitions(seperated by ;)" type="text" rows="2" required></textarea>
+                        </div>
+                        <div class="field required">
+                            <label>Education</label>
+                            <textarea name="educations" placeholder="Education(seperated by ;)" type="text" rows="2" required></textarea>
+                        </div>
+                    </div>
+
+                    <div class="two fields">
+                        <div class="field required">
+                            <label>Experience</label>
+                            <textarea name="experience" placeholder="Experience(seperated by ;)" type="text" rows="2" required></textarea>
+                        </div>
+                        <div class="field required">
+                            <label>Memberships</label>
+                            <textarea name="memberships" placeholder="Memberships(seperated by ;)" type="text" rows="2" required></textarea>
+                        </div>
+                    </div>
+
+                    <div class="two fields">
+                        <div class="field required">
+                            <label>Registrations</label>
+                            <textarea name="registrations" placeholder="Registrations(seperated by ;)" type="text" rows="2" required></textarea>
+                        </div>
+                        <div class="field required">
+                            <label>Address</label>
+                            <input name="AddressShort" placeholder="One line address" type="text" required>
+                        </div>
+                    </div>
+
+                    <div class="field required">
+                        <label>Add Photo</label>
+                        <input name="myImage" id="file-input" type="file" required>
+                    </div>
+
+                    
+                    <button id="submitBtn" class="ui button" tabindex="0" type='submit'>Submit Data</button>
+                  </form>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <!-- <script>
+        $('#submitBtn').click(function(){
+            $('#docData').submit();
+        })
+    </script> -->
+
+<% include partials/footer.ejs%>

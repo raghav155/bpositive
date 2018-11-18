@@ -1,0 +1,236 @@
+<% include partials/header.ejs%>
+<title >Healthfeed</title>
+</head>
+<body>
+<div class="navbar">
+                <div class="ui grid" style="height: 80px;border-bottom: 1px solid rgba(216,216,216,0.5);">
+                    <div class="eight wide column" style="height : 70px">
+                        <a href="/"><img style="margin-left : 60px;margin-top:10px" src="/bpositive.jpg" alt="logo" width="150px" height="50px"></a>
+                    </div>
+                    <div class="eight wide column">
+                        <%if(user != null){ %>
+                            <div style="margin-top: 20px;float: right;margin-right: 80px;" >
+                                <div style="text-transform: capitalize" id="sidebarBtn" class="text"> <i class="list layout icon"></i>
+                                    <%= user.fname%>&nbsp;<%= user.sname%>
+                                </div>
+                                <div class="ui sidebar right inverted vertical menu">
+                                    <a href="/profile" class="item">
+                                        <i class="doctor icon"></i>
+                                        Profile
+                                    </a>
+                                    <a href="#" class="item">
+                                        <i class="tasks icon"></i>
+                                        My Appointments
+                                    </a>
+                                    <a href="#" class="item">
+                                        <i class="edit icon"></i>
+                                        Edit/Update Profile
+                                    </a>
+                                    <a href="/logout" class="item">
+                                        <i class="sign out icon"></i>
+                                        Logout
+                                    </a>
+                                </div>
+                                <div class="pusher">
+                                     <!-- Site content !-->
+                                </div>
+                            </div>
+                        <%}else{%>
+                        <div style="margin-top: 10px;float: right;margin-right: 60px" class="ui buttons">
+                            <button style="border-radius: 0px" id="loginBtn" class="ui button red">Login</button>
+                                <div class="or"></div>
+                            <button style="border-radius: 0px" id="signUpBtn" class="ui teal button">Sign Up</button>
+                        </div>
+                        <%}%>
+                    </div>
+                </div>
+</div>
+<div style="border-radius: 0px" class="ui pointing menu">
+        <a mnum="1" class="item active topic">
+          Popular Health Articles
+        </a>
+        <a mnum="2" class="item topic">
+          Healthy Hair
+        </a>
+        <a mnum="3" class="item topic">
+          Healthy Eating
+        </a>
+        <a mnum="4" class="item topic">
+           Healthy Skin
+        </a>
+        <a mnum="4" class="item topic">
+           Balanced Diet
+        </a>
+        <div class="right menu">
+          <div class="item">
+            <div class="ui transparent icon input">
+              <input id="searchInput" placeholder="Search..." type="text">
+              <i id="searchBtn" class="search link icon"></i>
+            </div>
+          </div>
+        </div>
+</div>
+
+<!-- <h4 style="text-align: center;color: #787887">Showing results for <span id="query">Popular Health Articles</span></h4> -->
+<div style="padding: 50px 150px 50px 150px;" id="articles">
+    <div id="articlesGallery" class="ui fluid special cards">
+        <%for(let i=0;i<articles.length;i++){%>
+            <div style="width:333px;border-radius: 0px" class="card animated zoomIn delay-2s">
+                <div class="blurring dimmable image">
+                <div class="ui dimmer">
+                        <div class="content">
+                        <div class="center">
+                            <a target="_blank" href="<%= articles[i].url%>" class="ui inverted button">Read More</a>
+                        </div>
+                        </div>
+                </div>
+                    <img style="border-radius: 0px;max-height: 200px;min-height: 200px" src="<%= articles[i].urlToImage%>">
+                </div>
+                <div class="content">
+                    <a href="<%= articles[i].url%>" target="_blank" class="header"><%= articles[i].title%></a>
+                    <div style="padding-top:1em" class="meta">
+                        <span class="date"><%= articles[i].author%></span>
+                    </div>
+                    <div class="description">
+                        <%= articles[i].content%>
+                    </div>
+                </div>
+            </div>
+        <%}%>
+    </div>
+</div>
+<button id="moreArticles" style="margin-left: 45%;margin-bottom:20px;border-radius: 0px;background: white;color: #14bef0;border: 1px solid #14bef0" class="ui button">Load More</button>
+
+
+
+
+
+
+
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.3/semantic.js"></script>
+<script src="/js/customjs.js"></script>
+<script>
+    $('#moreArticles').mouseover(function() {
+        $(this).css({"background-color" : "#14bef0","color" : "white"});
+    }).mouseout(function() {
+        $(this).css({"background-color" : "white","color" : "#14bef0"});
+    });
+
+    var pageNo = 1;
+    $('.special.cards .image').dimmer({
+        on: 'hover'
+    });
+    var searchQuery = '';
+    $('.topic').click(function(){
+        searchQuery = '';
+        pageNo = 1;
+        $('.topic').removeClass('active');
+        $(this).addClass('active');
+        let query = $(this).text();
+        $('#moreArticles').css("display","none");
+        $('#articlesGallery').empty();
+        let loader = `
+            <div style="margin: 50px auto" id="articleLoader" class="ui active centered inline loader"></div>   
+        `;
+        $('#articles').append(loader);
+        var request = '';
+        console.log(query)
+        if($(this).attr('mnum') == '1'){
+            request = 'https://newsapi.org/v2/everything?language=en&q="health"&sortBy=relevancy&pageSize=16&page=1&apiKey=b997b94e71284df4980207822bbba1d2';
+        }else{
+            request = 'https://newsapi.org/v2/everything?language=en&q=' + "'" + query + "'" + '&sortBy=relavancy&pageSize=16&page=1&apiKey=b997b94e71284df4980207822bbba1d2';
+        }
+        getData(request);
+    });
+    
+    $('#searchInput').on('keyup',function(e){
+        if(e.keyCode == 13 && $('#searchInput').val() != ''){
+            searchQuery = $('#searchInput').val();
+            $('#searchInput').val('');
+            $('#articlesGallery').empty();
+            let request = 'https://newsapi.org/v2/everything?language=en&q=' + "'" + searchQuery + "'" + '&sortBy=relavancy&pageSize=16&page=1&apiKey=b997b94e71284df4980207822bbba1d2';
+            preTask(request);
+        }
+    });
+    $('#searchBtn').click(function(){
+        if($('#searchInput').val() != ''){
+            searchQuery = $('#searchInput').val();
+            $('#searchInput').val('');
+            $('#articlesGallery').empty();
+            let request = 'https://newsapi.org/v2/everything?language=en&q=' + "'" + searchQuery + "'" + '&sortBy=relavancy&pageSize=16&page=1&apiKey=b997b94e71284df4980207822bbba1d2';
+            preTask(request);
+        }
+    });
+
+    $('#moreArticles').click(function(){
+        pageNo = parseInt(pageNo) + 1;
+        let query = '';
+        if(searchQuery != ''){
+            query = searchQuery;
+        }else{
+            query = $('.active').text();
+        }
+        let request = '';
+        if($('.active').attr('mnum') == '1' && searchQuery == ''){
+            request = 'https://newsapi.org/v2/everything?language=en&q="health"&sortBy=relevancy&pageSize=16&page=' + pageNo + '&apiKey=b997b94e71284df4980207822bbba1d2';
+        }else{
+            request = 'https://newsapi.org/v2/everything?language=en&q=' + "'" + query + "'" + '&sortBy=relavancy&pageSize=16&page=' + pageNo + '&apiKey=b997b94e71284df4980207822bbba1d2';
+        }
+        preTask(request);
+    });
+    function preTask(request){
+        $('#moreArticles').css("display","none");
+        let loader = `
+            <div style="margin: 50px auto" id="articleLoader" class="ui active centered inline loader"></div>   
+        `;
+        $('#articles').append(loader);
+        getData(request);
+    }
+    function getData(request){
+        $.get(request,function(data,status){
+            $('#articles #articleLoader').remove();
+            let appendable = "";
+            for(let i=0;i<data.articles.length && i < 15 ;i++){
+                let app= `
+                    <div style="width:333px;border-radius: 0px" class="card animated zoomIn delay-2s">
+                        <div class="blurring dimmable image">
+                        <div class="ui dimmer">
+                            <div class="content">
+                            <div class="center">
+                                <a target="_blank" href=${data.articles[i].url} class="ui inverted button">Read More</a>
+                            </div>
+                            </div>
+                        </div>
+                        <img style="max-height:200px;min-height:200px;border-radius: 0px" src=${data.articles[i].urlToImage}>
+                        </div>
+                        <div class="content">
+                        <a href=${data.articles[i].url} target="_blank" class="header">${data.articles[i].title}</a>
+                        <div style="padding-top:1em" class="meta">
+                            <span class="date">${data.articles[i].author}</span>
+                        </div>
+                        <div class="description">
+                            ${data.articles[i].content}...
+                        </div>
+                        </div>
+                    </div>
+                `;
+
+                appendable += app;
+            }
+
+            $('#articlesGallery').append(appendable);
+            $('.special.cards .image').dimmer({
+                on: 'hover'
+            });
+            if(data.articles.length > 15){
+                $('#moreArticles').css("display","block");
+            }
+        });
+    }
+</script>
+
+<% include partials/footer.ejs%>

@@ -1,0 +1,223 @@
+<% include partials/header.ejs%>
+<title><%= user.fname%>&nbsp;<%= user.sname%></title>
+</head>
+<body>
+
+<div class="navbar">
+    <div class="ui grid" style="height: 80px;border-bottom: 1px solid rgba(216,216,216,0.5)">
+        <div class="eight wide column" style="height : 70px">
+            <a href="/"><img style="margin-left : 60px;margin-top:10px" src="/bpositive.jpg" alt="logo" width="150px" height="50px"></a>
+        </div>
+        <div class="eight wide column">
+            <div style="margin-top: 20px;float: right;margin-right: 80px;" >
+                <div style="text-transform: capitalize" id="sidebarBtn" class="text"> <i class="list layout icon"></i>
+                    <%= user.fname%>&nbsp;<%= user.sname%>
+                </div>
+                <div class="ui sidebar right inverted vertical menu">
+                    <a href="/profile" class="item">
+                        <i class="doctor icon"></i>
+                            Profile
+                    </a>
+                    <a href="#" class="item">
+                        <i class="tasks icon"></i>
+                            My Appointments
+                    </a>
+                    <a href="#" class="item">
+                        <i class="edit icon"></i>
+                            Edit/Update Profile
+                    </a>
+                    <a href="/logout" class="item">
+                        <i class="sign out icon"></i>
+                            Logout
+                    </a>
+                </div>
+                <div class="pusher">
+                    <!-- Site content !-->
+                </div>
+            </div>
+            <a href="/healthfeed" style="float: right;margin-top: 20px;margin-right: 30px;color: black">Read Health Articles</a>
+        </div>
+    </div>
+</div>
+
+<%if(errMessage.length > 0){%>
+    <div style="text-align: center; margin: 20px auto;padding: 20px; width: 60%; font-size: 20px" class="ui red inverted segment">
+        <%= errMessage%>
+    </div>
+<%}%>
+<%if(successMessage.length > 0){%>
+    <div style="text-align: center; margin: 20px auto;padding: 20px; width: 60%; font-size: 20px" class="ui green inverted segment">
+        <%= successMessage%>
+    </div>
+<%}%>
+
+<div style="background: #fafafa;height: 500px;margin-top: 14px">
+    <div style="width: 95%;margin: 0 auto;background-color: white;position: relative;top: 30px">
+        <div style="padding: 20px;border-bottom: 1px solid rgba(216,216,216,0.5)">
+            <span style="font-size: 15px;font-weight: bold">Accounts</span>
+            <button id="saveBtn" style="float: right;margin-top: -6px;border-radius: 0px" class="ui button blue">Save Changes</button>
+        </div>
+
+        <div class="ui grid">
+            <div class="four wide column">
+              <div style="padding: 20px">
+                <% if(user.profilepic != null && user.provider == 'google'){%>
+                <img style="height: 100px !important;width: 100px !important;display: inline" class="ui tiny circular image" src="<%=user.profilepic %>">
+                <% }else if(user.profilepic != null && user.provider == 'local'){%>
+                <img style="height: 100px !important;width: 100px !important;display: inline" class="ui tiny circular image" src="/images/uploads/<%=user.profilepic %>">
+                <%}else{ %>
+                <img style="height: 100px !important;width: 100px !important;display: inline" class="ui tiny circular image" src="/default-profile-picture.png">
+                <%} %>
+                <a id="uploadBtn" style="margin-left: 10px;color: #14BEF0;font-weight: bold" href="#">Add Photo</a>
+              </div>
+              <span style="margin-left: 30px;color: #B4B4BE">Profile Photo</span>
+              <form style="display: none;" action="/updateProfilePic" method="post" enctype="multipart/form-data">
+                <input name="myImage" type="file" id="pic-file">
+                <button type="submit" id="sbtn"></button>
+              </form>
+            </div>
+            <div class="twelve wide column">
+
+            </div>
+        </div>
+        <div style="border-bottom: 1px solid rgba(216,216,216,0.5)" ></div>
+        <form id="edit" action="/updateProfile" method="POST" style="padding: 40px" class="ui tiny form">
+            <div class="fields">
+                <div class="three wide field">
+                    <label style="color: #787887;font-weight: 100">First name</label>
+                    <input value="<%=user.fname != undefined ? user.fname : ''  %>" name="fname" placeholder="First Name" type="text">
+                </div>
+                <div style="width: 50px !important" class="one wide field">
+                </div>
+                <div class="three wide field">
+                    <label style="color: #787887;font-weight: 100">Last name</label>
+                    <input value="<%=user.sname != undefined ? user.sname : ''  %>" name="sname" placeholder="Last Name" type="text">
+                </div>
+                <div style="width: 50px !important" class="one wide field">
+                </div>
+                <div class="three wide disabled field">
+                    <label style="color: #787887;font-weight: 100">Email</label>
+                    <input value="<%=user.email != undefined ? user.email : ''  %>" name="email" placeholder="Email" type="text">
+                </div>
+            </div>
+            <div style="margin-top: 30pprofilex" class="fields">
+                <div class="three wide field">
+                    <label style="color: #787887;font-weight: 100">Gender</label>
+                    <div class="ui selection dropdown">
+                        <input value="<%=user.gender != undefined ? user.gender : ''  %>" name="gender" type="hidden">
+                        <i class="dropdown icon"></i>
+                        <div class="default text">Gender</div>
+                        <div class="menu">
+                            <div class="item" data-value="Male">Male</div>
+                            <div class="item" data-value="Female">Female</div>
+                            <div class="item" data-value="Other">Other</div>
+                        </div>
+                    </div>
+                </div>
+                <div style="width: 50px !important" class="one wide field">
+                </div>
+                <div class="three wide field">
+                    <label style="color: #787887;font-weight: 100">Blood Group</label>
+                    <div class="ui selection dropdown">
+                        <input value="<%=user.bloodgroup != undefined ? user.bloodgroup : ''  %>" name="bloodgroup" type="hidden">
+                        <i class="dropdown icon"></i>
+                        <div class="default text">Blood Group</div>
+                        <div class="menu">
+                            <div class="item" data-value="O+">O+</div>
+                            <div class="item" data-value="A+">A+</div>
+                            <div class="item" data-value="B+">B+</div>
+                            <div class="item" data-value="A-">A-</div>
+                            <div class="item" data-value="B-">B-</div>
+                            <div class="item" data-value="O-">O-</div>
+                            <div class="item" data-value="AB+">AB+</div>
+                            <div class="item" data-value="AB-">AB-</div>
+                        </div>
+                    </div>
+                </div>
+                <div style="width: 50px !important" class="one wide field">
+                </div>
+                <div class="three wide field">
+                    <label style="color: #787887;font-weight: 100">Date of Birth</label>
+                    <div class="ui calendar" id="example1">
+                        <div class="ui input left icon">
+                            <i class="calendar icon"></i>
+                            <input value="<%=user.dob != undefined ? user.dob : ''  %>" name="dob" type="text" placeholder="Date/Time">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="border-bottom: 1px solid rgba(216,216,216,0.5);margin-top: 30px;margin-bottom: 30px" ></div>
+
+            <p style="color: #787887;font-size: 15px">Address</p>
+            <div class="fields">
+                <div class="three wide field">
+                    <label style="color: #787887;font-weight: 100">House No./ Street Name/ Area</label>
+                    <input value="<%=user.houseNo != undefined ? user.houseNo : ''  %>" name="houseNo"  type="text">
+                </div>
+                <div style="width: 50px !important" class="one wide field">
+                </div>
+                <div class="three wide field">
+                    <label style="color: #787887;font-weight: 100">Colony / Street / Locality</label>
+                    <input value="<%=user.street != undefined ? user.street : ''  %>" name="street"  type="text">
+                </div>
+                <div style="width: 50px !important" class="one wide field">
+                </div>
+                <div class="three wide field">
+                    <label style="color: #787887;font-weight: 100">City</label>
+                    <input value="<%=user.city != undefined ? user.city : ''  %>" name="city"  type="text">
+                </div>
+            </div>
+
+            <div style="margin-top: 25px" class="fields">
+                <div class="three wide field">
+                    <label style="color: #787887;font-weight: 100">State</label>
+                    <input value="<%=user.state != undefined ? user.state : ''  %>" name="state"  type="text">
+                </div>
+                <div style="width: 50px !important" class="one wide field">
+                </div>
+                <div class="three wide disabled field">
+                    <label style="color: #787887;font-weight: 100">Country</label>
+                    <input value="<%=user.country != undefined ? user.country : ''  %>" name="country"  type="text">
+                </div>
+                <div style="width: 50px !important" class="one wide field">
+                </div>
+                <div class="three wide field">
+                    <label style="color: #787887;font-weight: 100">Pincode</label>
+                    <input value="<%=user.pincode != undefined ? user.pincode : ''  %>" name="pincode"  type="text">
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.3/semantic.js"></script>
+<script src="https://cdn.rawgit.com/mdehoog/Semantic-UI-Calendar/76959c6f7d33a527b49be76789e984a0a407350b/dist/calendar.min.js"></script>
+<script src="/js/customjs.js"></script>
+<script>
+    $('#uploadBtn').click(function(){
+        $('#pic-file').click();
+    });
+    $('#pic-file').change(function(){
+        $('#sbtn').click();
+    });
+
+    $('.dropdown')
+    .dropdown()
+    ;
+
+    $('#example1').calendar({
+        type : 'date'
+    });
+
+    $('#saveBtn').click(function(){
+        $('#edit').submit();
+    });
+
+    $('.segment').fadeOut(3000);
+</script>
+<% include partials/footer.ejs%>
+
+

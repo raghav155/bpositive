@@ -1,0 +1,161 @@
+<% include partials/header.ejs%>
+<title>Sign Up Bpositive</title>
+</head>
+<body>
+
+<div class="navbar">
+    <div class="ui grid" style="height: 75px;border-bottom: 1px solid rgba(216,216,216,0.5);">
+        <div class="eight wide column" style="height : 70px">
+            <a href="/"><img style="margin-left : 60px;margin-top:10px" src="/bpositive.jpg" alt="logo" width="150px" height="50px"></a>
+        </div>
+        <div class="eight wide column">
+            <div style="margin-top: 10px;float: right;margin-right: 60px" class="ui buttons">
+                <button style="border-radius: 0px" id="loginBtn" class="ui button red">Login</button>
+                    <div class="or"></div>
+                <button style="border-radius: 0px" id="signUpBtn" class="ui teal button">Sign Up</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div style="margin: 0 auto;width: 70%;margin-top: 20px">
+    <div style="text-align: center;border-bottom: 1px solid rgba(216,216,216,0.5);height: 43px">
+        <ul style="display: block;float: none;clear: both;margin: 0 auto;padding: 0px;width: 250px">
+            <li style="float: left;display: inline-block;padding: 0 20px;">
+                <a href="/login" style="color: #4a4a4a;;padding: 10px;margin: 0;float: left;display: inline-block">Login</a>
+            </li>
+            <li style="float: left;display: inline-block;padding: 0 20px;border-bottom: 3px solid #14bef0">
+                <a href="/signup" style="color: #14bef0;padding: 10px;margin: 0;float: left;display: inline-block">Register</a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<%if(errMessage.length > 0){%>
+    <div style="text-align: center; margin: 20px auto;padding: 30px; width: 60%; font-size: 20px" class="ui red inverted segment">
+        <%= errMessage%>
+    </div>
+<%}%>
+
+<div id="err" style="text-align: center; margin: 20px auto;padding: 20px; width: 60%; font-size: 20px;display: none" class="ui red inverted segment">
+    OTP already sent!!
+</div>
+<div id="err1" style="text-align: center; margin: 20px auto;padding: 20px; width: 60%; font-size: 20px;display: none" class="ui red inverted segment">
+    Email already Exists!!
+</div>
+<div class="ui grid" style="margin: 0 auto;width: 70%;margin-top: 20px;height: 500px;">
+    <div class="eight wide column">
+        <img src="/practo.png" alt="bpositive">
+    </div>
+    <div class="eight wide column">
+        <form action="/signup" method="post" style="padding: 30px;border: 1px solid rgba(216,216,216,0.5);border-radius: 5px" class="ui form">
+            <h3 style="font-size: 15px;color: #787887;border-bottom: 1px solid rgba(216,216,216,0.5);padding-bottom: 10px">
+                Join Bpositive
+            </h3>
+            <div class="fields">
+                <div class="field">
+                    <label style="color: #787887;font-weight: 400">First Name</label>
+                    <input name="firstname" placeholder="First Name" type="text" required>
+                </div>
+                <div class="field">
+                    <label style="color: #787887;font-weight: 400">Last Name</label>
+                    <input name="lastname" placeholder="Last Name" type="text" required>
+                </div>
+            </div>
+            <div class="field">
+                <label style="color: #787887;font-weight: 400">Email ID</label>
+                <input id="emailInput" name="email" placeholder="Email ID" type="text" required>
+            </div>
+            <div class="field">
+                <label style="color: #787887;font-weight: 400">Password</label>
+                <input id="pass" data-content = "Password should be minimum of 10 characters" name="password" placeholder="Password (Minimum 10 characters)" type="password" required>
+            </div>
+            <button id="otpBtn" style="width: 100%;margin-top: 20px;font-size: 15px;background-color: #13bef0;color: white;padding: 15px;border-radius: 0px" class="ui button " >Send OTP</button>
+
+            <div id="otpInput" style="margin-top: 20px;display: none" class="field">
+                <label style="color: #787887;font-weight: 400">Enter OTP</label>
+                <input name="otp" placeholder="Please check your Email for OTP" type="text" required>
+            </div>
+            <button id="registerBtn" style="width: 100%;margin-top: 20px;font-size: 15px;color: white;padding: 15px;display: none;border-radius: 0px" class="ui button red" type="submit" >Register</button>
+
+            <div style="color: #787887;margin-top: 30px;margin-bottom: 30px" class="ui horizontal divider">
+                    Or
+            </div>
+
+            <a href="/auth/google" style="width: 100%;font-size: 15px;padding: 15px;border-radius: 0px" class="ui google plus button">
+                <i class="google plus icon"></i>
+                Google Plus
+            </a>
+        </form>
+    </div>
+</div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.3/semantic.js"></script>
+<script src="/js/customjs.js"></script>
+<script>
+    $('#otpBtn').click(function(event){
+        event.preventDefault();
+        let pass = $('#pass').val();
+        
+        if(pass.length < 10){
+            $('#pass')
+            .popup({
+                position   : 'left center',
+                on : 'click'
+            })
+            .popup('show')
+            ;
+
+            $('#pass').val('');
+        }else{
+
+            $('#otpBtn').attr('disabled','disabled');
+            let email = $('#emailInput').val();
+            $.ajax({
+                type: "POST",
+                url: "/sendotp",
+                data: {email:email},
+                cache: false,
+                success: function(data){
+                    if(data.emailPresent == true){
+                        $('#err1').css('display','block');
+                        $('#err1').fadeOut(5000,function(){
+                            $('#otpBtn').removeAttr('disabled');
+                        });
+                    }else if(data.otpPresent == true){
+                        $('#err').css('display','block');
+                        $('#err').fadeOut(5000,function(){
+                            init();
+                        });
+                    }else{
+                        init();
+                    }
+                }
+            });
+
+            function init(){
+                $('#otpInput').css('display','block');
+                            $('#registerBtn').css('display','block');
+
+                            var sec = 60;
+                            countDown();
+
+                            function countDown(){
+                                if(sec <= 0){
+                                    $('#otpBtn').text('Send OTP');
+                                    $('#otpBtn').removeAttr('disabled');
+                                    $('#otpInput').css('display','none');
+                                    $('#registerBtn').css('display','none');
+                                    return;
+                                }
+                                $('#otpBtn').text('Resend OTP after ' + sec + ' sec');
+                                sec -= 1;
+                                setTimeout(countDown,1000);
+                            }
+            }
+        }
+    })
+</script>
+<% include partials/footer.ejs%>

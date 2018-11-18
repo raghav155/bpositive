@@ -1,0 +1,276 @@
+<% include partials/header.ejs%>
+<title>Dashboard</title>
+</head>
+<body>
+<div style="border-radius : 0px" class="ui inverted menu">
+
+  <a style="padding: 25px;color:white">
+    <span class="itemc activec" style="cursor:pointer"><i style="font-size: 20px" class="dashboard icon"></i> Dashboard</span>
+  </a>
+  <a href="/logout_doctor" style="padding: 25px;color:rgba(255, 255, 255, 0.6)">
+    <span class="itemc" style="cursor:pointer"><i style="font-size: 20px" class="user icon"></i> Settings</span>
+  </a>
+
+  <img doc-id="<%= user.id%>" doc_fname="<%= user.firstName%>" doc_sname="<%= user.lastName%>" id="doc-logo" style="position:relative;right:-73%;height:60px;margin-top:5px;cursor:pointer" class="ui tiny image" src="/images/uploads/<%= user.fileName%>">
+</div>
+
+<div style="height:100%" class="ui grid">
+  <div style="background-color:#34495e" class="two wide column">
+    <div id="feedbacks" class="mitem" style="padding:25px;text-align:center;color:rgba(255, 255, 255, 0.6)"><i style="font-size:250%" class="mail outline icon"></i><p style="cursor:pointer">Feedbacks</p></div>
+    <div id="appointments" class="mitem" style="padding:25px;text-align:center;color:rgba(255, 255, 255, 0.6)"><i style="font-size:250%" class="inbox icon"></i><p style="cursor:pointer">Appointments</p></div>
+    <div id="chats" class="mitem mactive" style="padding:25px;text-align:center;color:white"><i style="font-size:250%" class="chat outline icon"></i><p style="cursor:pointer">Chat</p></div>
+  </div>
+<div style="padding:0px;overflow-y:scroll" class="fourteen wide column">
+   <div style="margin:0px;height:100%" class="ui grid">
+    <div style="background-color:#272d35;padding:0px" class="three wide column">
+      <h5 style="text-align:center;color:white;padding:10px;border-bottom: 1px solid #41474d;margin-bottom:0px">Your Patients</h5>
+      <% for(let i=0;i<patients.length;i++){ %>
+      <div id="<%= patients[i].id%>" fname="<%= patients[i].fname%>" sname="<%= patients[i].sname%>" style="margin:0px;padding:15px;cursor:pointer" class="ui grid user">
+         <div style="padding:0px;text-align:center;" class="five wide column">
+           <%if(patients[i].provider == 'google'){%>
+                <img style="border-radius:50px" class="ui avatar image" src="<%= patients[i].profilepic%>">
+           <%}else{%>
+                <img style="border-radius:50px" class="ui avatar image" src="/images/uploads/<%= patients[i].profilepic%>">
+           <%}%>
+         </div>
+         <div style="padding:5px;font-weight:800;color:white;text-transform:capitalize" class="ten wide column"><%= patients[i].fname%>&nbsp <%= patients[i].sname%></div>
+      </div>
+      <%}%>
+    </div>
+
+    <div class="thirteen wide column">
+       <div id="chatui" class="ui grid">
+         
+       </div>
+    </div>
+
+   </div>
+</div>
+</div>
+
+
+
+
+
+
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.3/semantic.js"></script>
+<script src="/js/socket-io.js"></script>
+<script src="/js/customjs.js"></script>
+<script>
+window.onload = function(){
+    var doc_id = $('#doc-logo').attr('doc-id');
+    var dfname = $('#doc-logo').attr('doc_fname');
+    var dsname = $('#doc-logo').attr('doc_sname');
+    var image = $('#doc-logo').attr('src');
+    var user_image = '';
+    var user_id ='';
+    var users=[];
+    let userpane = $('.user');
+    for(let i=0;i<userpane.length;i++){
+        users.push(userpane[i].id);
+    }
+    
+    $('.itemc').mouseover(function() {
+            $(this).css({"color" : "white"});
+        }).mouseout(function() {
+            $(this).css({"color" : "rgba(255, 255, 255, 0.6)"});
+            $('.activec').css("color","white");
+    });
+
+    $('.mitem').mouseover(function() {
+            $(this).css({"color" : "white"});
+        }).mouseout(function() {
+            $(this).css({"color" : "rgba(255, 255, 255, 0.6)"});
+            $('.mactive').css("color","white");
+    });
+
+    $('.user').mouseover(function(){
+        $(this).css({"background-color":"dimgrey"});
+    }).mouseout(function(){
+        $(this).css({"background-color":"rgb(39,45,53)"});
+    })
+
+    var socket = io('127.0.0.1:4000',{
+        query : {
+          id : doc_id
+        }
+    });
+
+
+    $('.user').click(function(){
+        $('.active').css("border-left","none");
+        $('.active').removeClass('active');
+        $(this).addClass('active');
+        $(this).css("border-left","#2b80ff 2px solid");
+
+        $('#chatui').empty();
+        $('#chatui').append('<div style="margin-top:50px" class="ui active centered inline loader"></div>');
+
+        user_id = $(this).attr('id');
+        let fname = $(this).attr('fname');
+        let sname = $(this).attr('sname');
+        user_image = $(this)[0].children[0].children[0].getAttribute('src')
+        console.log(user_image)
+        $.ajax({
+            type : 'GET',
+            url : '/getChats',
+            data : {
+                doc_id : doc_id,
+                user_id : user_id
+            },
+            cache : false,
+            success : function(data){
+                if(data.isLoggedIn != undefined){
+                    window.location = '/login';
+                }else{
+                    $('.loader').remove();
+                    let appendable = `
+                     <div style="padding:0px" class="eleven wide column">
+                    <div style="padding:20px;background-color:#e9ecf2;border-bottom: #d6d7da 1px solid">
+                        <i style="font-size:20px;color:#80858b;margin-left:600px;cursor:pointer" class="facetime video icon"></i>
+                        <span style="float:left;position:relative;top:-20px" id="typing"></span>
+                    </div>
+                    <div style="height:450px;background-color:#e9ecf2;overflow-y:scroll" id="messages">
+                    </div>
+                    <div class="ui fluid icon input">
+                            <input id="messageInput" style="padding:20px;border-radius:0px" placeholder="Type your message..." type="text">
+                            <i style="font-size:20px;" class="play basic icon"></i>
+                        </div>
+                    </div>
+
+                    <div class="five wide column">
+                    </div>
+                    `;
+                    $('#chatui').append(appendable);
+                    $('.video').mouseover(function(){
+                    $(this).css({"color":"black"});
+                    }).mouseout(function(){
+                        $(this).css({"color":"#80858b"});
+                    });
+
+                    let app = '';
+                    for(let i=0;i<data.conv.length;i++){
+                        if(data.conv[i].sender_id == user_id){
+                            app += `<div style="width:50%;margin-top:0px;min-height:80px;margin:20px" class="ui grid">
+                            <div style="padding:0px;text-align:center" class="three wide column">
+                              <img style="width:30px;border-radius:50px" src="${user_image}">
+                              <p style="color:#696e72;font-size:11px;text-transform: capitalize">${fname} ${sname}</p>
+                            </div>
+                            <div style="background-color:white;border-radius:5px;padding:20px" class="thirteen wide column">
+                              <p style="padding:10px;color:dimgrey;word-break: break-all">${data.conv[i].message}</p>
+                            </div>
+                        </div>`;
+                        }else{
+                           app += `<div style="width:50%;margin-top:0px;min-height:80px;margin:20px;float:right" class="ui grid">
+                            <div style="background-color:#0084ff;border-radius:5px;padding:20px" class="thirteen wide column">
+                              <p style="padding:10px;color:white;word-break: break-all">${data.conv[i].message}</p>
+                            </div>
+                            <div style="padding:0px;text-align:center" class="three wide column">
+                              <img style="width:30px;border-radius:50px" src="${image}">
+                              <p style="color:#696e72;font-size:11px;text-transform: capitalize;">${dfname} ${dsname}</p>
+                            </div>
+                          </div>`;
+                        }
+                        $('#messages').append(app);
+                        app = '';
+                        $('#messages').scrollTop($('#messages').scrollTop()+1000);
+                    }
+
+
+
+
+                    $('#messageInput').keypress(function(){
+                        socket.emit('docTyping',{
+                            user_id : user_id
+                        });
+                    });
+                    $('#messageInput').keyup(function(){
+                            if($('#messageInput')[0].value.length == 0){
+                                socket.emit('docKeyUp',{
+                                user_id : user_id
+                            });
+                        }
+                    });
+
+                    $('#messageInput').keypress(function(e){
+                        if(e.which == 13){
+                            let message = $('#messageInput').val();
+                            $('#messageInput').val('');
+                            socket.emit('docMessage',{
+                                user_id : user_id,
+                                doc_id : doc_id,
+                                message : message,
+                                image : image
+                            });
+
+                            let appendable = `<div style="width:50%;margin-top:0px;min-height:80px;margin:20px;float:right" class="ui grid">
+                            <div style="background-color:#0084ff;border-radius:5px;padding:20px" class="thirteen wide column">
+                              <p style="padding:10px;color:white;word-break: break-all">${message}</p>
+                            </div>
+                            <div style="padding:0px;text-align:center" class="three wide column">
+                              <img style="width:30px;border-radius:50px" src="${image}">
+                              <p style="color:#696e72;font-size:11px;text-transform: capitalize;">${dfname} ${dsname}</p>
+                            </div>
+                          </div>`;
+
+                          $('#messages').append(appendable);
+                          $('#messages').scrollTop($('#messages').scrollTop()+1000);
+                        }
+                    });
+
+                    socket.on('userTyping',function(){
+                        let html = `<p style="color:#696e72" id="typingMessage"><span style="font-weight:800;text-transform:capitalize;">${fname} ${sname}</span> is typing...</p>`;
+                        $('#typing').html(html);
+                    })
+                    socket.on('userKeyUp',function(){
+                        $('#typing').html('');
+                    });
+
+                    socket.on('acknowledge',function(data){
+                        if(data.user_id == user_id){
+                            let appendable = `<div style="width:50%;margin-top:0px;min-height:80px;margin:20px" class="ui grid">
+                                <div style="padding:0px;text-align:center" class="three wide column">
+                                <img style="width:30px;border-radius:50px" src="${data.image}">
+                                <p style="color:#696e72;font-size:11px;text-transform: capitalize">${fname} ${sname}</p>
+                                </div>
+                                <div style="background-color:white;border-radius:5px;padding:20px" class="thirteen wide column">
+                                <p style="padding:10px;color:dimgrey;word-break: break-all">${data.message}</p>
+                                </div>
+                            </div>`;
+
+                            $('#messages').append(appendable);
+                            $('#messages').scrollTop($('#messages').scrollTop()+1000);
+                        }
+                        // else{
+                        //     if($.inArray(data.user_id,users) != -1){
+                        //         $("#" + data.user_id).remove();
+                        //     }
+                        // }
+                    });
+                }
+            }
+        });
+    })
+
+    $('#doc-logo').click(function(){
+        window.location = "/dashboard/profile"
+    });
+
+    $('#feedbacks').click(function(){
+        window.location = '/dashboard';
+    });
+    $('#appointments').click(function(){
+        window.location = '/dashboard/appointments';
+    });
+    $('#chats').click(function(){
+        window.location = '/dashboard/chats';
+    });
+    
+}
+
+</script>
+<% include partials/footer.ejs%>

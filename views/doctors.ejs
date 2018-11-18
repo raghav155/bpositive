@@ -1,0 +1,187 @@
+<% include partials/header.ejs%>
+<title></title>
+</head>
+<body>
+
+<div class="navbar">
+                <div class="ui grid" style="height: 80px;border-bottom: 1px solid rgba(216,216,216,0.5);">
+                    <div class="eight wide column" style="height : 70px">
+                        <a href="/"><img style="margin-left : 60px;margin-top:10px" src="/bpositive.jpg" alt="logo" width="150px" height="50px"></a>
+                    </div>
+                    <div class="eight wide column">
+                        <%if(user != null){ %>
+                            <div style="margin-top: 20px;float: right;margin-right: 80px;" >
+                                <div style="text-transform: capitalize" id="sidebarBtn" class="text"> <i class="list layout icon"></i>
+                                    <%= user.fname%>&nbsp;<%= user.sname%>
+                                </div>
+                                <div class="ui sidebar right inverted vertical menu">
+                                    <a href="/profile" class="item">
+                                        <i class="doctor icon"></i>
+                                        Profile
+                                    </a>
+                                    <a href="#" class="item">
+                                        <i class="tasks icon"></i>
+                                        My Appointments
+                                    </a>
+                                    <a href="#" class="item">
+                                        <i class="edit icon"></i>
+                                        Edit/Update Profile
+                                    </a>
+                                    <a href="/logout" class="item">
+                                        <i class="sign out icon"></i>
+                                        Logout
+                                    </a>
+                                </div>
+                                <div class="pusher">
+                                     <!-- Site content !-->
+                                </div>
+                            </div>
+                        <%}else{%>
+                        <div style="margin-top: 10px;float: right;margin-right: 60px" class="ui buttons">
+                            <button style="border-radius: 0px" id="loginBtn" class="ui button red">Login</button>
+                                <div class="or"></div>
+                            <button style="border-radius: 0px" id="signUpBtn" class="ui teal button">Sign Up</button>
+                        </div>
+                        <%}%>
+                        <a href="/healthfeed" style="float: right;margin-top: 20px;margin-right: 30px;color: black">Read Health Articles</a>
+                    </div>
+                </div>
+</div>
+<div style="background-color: #f0f0f5;margin-top: 14px">
+    <div style="width: 90%;margin: 0 auto;">
+        <p style="padding: 20px;color: #787887;font-size: 12px;letter-spacing: .3px"><%=data.length %> matches found for : <span style="font-weight: 700"><%= query%></span></p>
+        <div class="ui grid" style="padding: 0px 25px 25px 25px">
+            <div style="padding: 20px" class="twelve wide column">
+                <% for(let j=0;j<data.length;j++){%>
+                <div style="background: white;box-shadow: 0 1px 2px 1px hsla(0,0%,43%,.14);margin-bottom: 30px" class="ui grid animated fadeIn delay-2s">
+                    <div class="three wide column" style="padding: 12px 0px 12px 12px">
+                        <div class="ui image">
+                            <img style="width: 100px;height:100px;margin-left: 10px;border-radius: 5px" src="/images/uploads/<%= data[j].fileName%>">
+                        </div>
+                    </div>
+                    <div class="nine wide column" style="padding: 12px 12px 12px 0px">
+                        <a class="docName" style="text-transform: capitalize;color: #14bef0;cursor: pointer;font-weight: bold;font-size: 17px;letter-spacing: .2px" href="./<%=query%>/single?doctor_id=<%= data[j].id%>">Dr. <%= data[j].firstName.toLowerCase()%> <%= data[j].lastName.toLowerCase()%></a>
+                        <p style="margin-top: 10px;color: #414146;"><%= data[j].sdetails%> <br> <%= data[j].practice%></p>
+                        <p style="font-weight: bold"><%= data[j].housing%></p>
+
+                        <% let services = data[j].services.split(";")%>
+                        <p style="margin-bottom: 0px">
+                            <% for(let i=0;i<8 && i < services.length;i++) {%>
+                                <a style="margin-bottom: 5px" class="ui label"><%= services[i] %></a> 
+                            <%} %>
+
+                            <%if(services.length - 8 > 0) {%>
+                                <p style="color : #414146"><%= services.length -8%> more services</p>
+                            <% }%>
+                        </p>
+                        <!-- <p>Remember to add feedback by any user and contact button</p> -->
+                    </div>
+                    <div class="four wide column" style="padding: 12px 12px 12px 0px">
+                        <div style="border-bottom: 1px solid #f0f0f5" class="ui list">
+                            <a style="margin-bottom: 10px" class="item">
+                                <i class="thumbs up outline icon"></i>
+                                <div class="content">
+                                    <div class="description">
+                                        <% if(data[j].votes > 0) {%>
+                                        <span style="color: #01a400;font-weight: bold"><%= ((data[j].totalvotes/(data[j].votes*5))*100).toFixed(0) %> % </span>
+                                        &nbsp;
+                                        <% }%>
+                                    <span style="color: #787887;font-size: 12px">(<%= data[j].votes%> votes)</span></div>
+                                </div>
+                            </a>
+                            <a style="margin-bottom: 10px" class="item">
+                                <i class="browser icon"></i>
+                                <div class="content">
+                                    <div class="description"><%= data[j].votes%> Feedbacks</div>
+                                </div>
+                            </a>
+                            <a style="margin-bottom: 10px" class="item">
+                                <i class="map marker icon"></i>
+                                <div class="content">
+                                    <div style="text-transform: capitalize" class="description"><%= data[j].addressShort.toLowerCase() %></div>
+                                </div>
+                            </a>
+                            <a style="margin-bottom: 10px" class="item">
+                                <i class="money icon"></i>
+                                <div class="content">
+                                    <div class="description">Rs. <%= data[j].price %></div>
+                                </div>
+                            </a>
+                            <a style="margin-bottom: 10px" class="item">
+                                <i class="time icon"></i>
+                                <div class="content">
+                                    <div style="color: #01a400;font-weight: bold" class="description">Available Today</div>
+                                </div>
+                            </a>
+                        </div>
+                        <button style="width: 100%;border-radius: 0px;background-color: #14bef0;color: white;padding: 5px;" class="ui button">
+                                <i class="checkmark icon"></i>
+                               <span font-weight: bold>Book Appointment</span> <br>
+                            <span style="font-size: 12px">No booking fee</span>
+                        </button>
+                    </div>
+                </div>
+                <%} %>
+            </div>
+            <div style="padding: 0px 10px 10px 10px" class="four wide column">
+                <h2 style="text-align: center">Top Health Articles</h2>
+                <div class="loader1">Loading...</div>
+                <div id="articles" class="ui items">
+                        
+                </div>
+                <button id="moreArticles" style="margin-left: 80px;border-radius: 0px;display: none" class="ui primary button">
+                    More Articles
+                </button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.3/semantic.js"></script>
+<script src="/js/customjs.js"></script>
+<script>
+    $('.dropdown')
+     .dropdown()
+     ;
+     $(".docName").mouseover(function() {
+        $(this).css("text-decoration","underline");
+    }).mouseout(function() {
+        $(this).css("text-decoration","none");
+    });
+    $.get('https://newsapi.org/v2/everything?language=en&q="health"&sortBy=relavancy&pageSize=10&page=1&apiKey=b997b94e71284df4980207822bbba1d2',function(data,status){
+        $('.loader1').remove();
+        let appendable = "";
+            for(let i=0;i<data.articles.length;i++){
+                let app= `
+                    <div style="padding: 10px 20px 20px 20px;background-color:white" class="item animated zoomIn delay-2s">
+                        <div style="max-width:80px" class="image">
+                        <img src=${data.articles[i].urlToImage}>
+                        </div>
+                        <div class="content">
+                        <a href=${data.articles[i].url} target="_blank" style="font-size:14px" class="header">${data.articles[i].title}</a>
+                        <div class="meta">
+                            <span>${data.articles[i].author}</span>
+                        </div>
+                        </div>
+                    </div>
+                `;
+
+                appendable += app;
+            }
+            $('#articles').append(appendable);
+            $('#moreArticles').css("display","block");
+    });
+    $('#moreArticles').click(function(){
+        window.location = '/healthfeed';
+    });
+</script>
+<% include partials/footer.ejs%>

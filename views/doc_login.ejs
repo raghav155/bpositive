@@ -1,0 +1,59 @@
+<% include partials/header.ejs%>
+<title>Doctor Login Bpositive</title>
+</head>
+<body>
+
+<div class="navbar">
+    <div class="ui grid" style="height: 75px;border-bottom: 1px solid rgba(216,216,216,0.5);">
+        <div class="eight wide column" style="height : 70px">
+            <a href="/"><img style="margin-left : 60px;margin-top:10px" src="/bpositive.jpg" alt="logo" width="150px" height="50px"></a>
+        </div>
+        <div class="eight wide column">
+            <div style="margin-top: 10px;float: right;margin-right: 60px" class="ui buttons">
+                <button style="border-radius: 0px" id="loginBtn" class="ui button red">Login</button>
+                    <div class="or"></div>
+                <button style="border-radius: 0px" id="signUpBtn" class="ui teal button">Sign Up</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%if(errMessage.length > 0){%>
+    <div style="text-align: center; margin: 20px auto;padding: 20px; width: 60%; font-size: 20px" class="ui red inverted segment">
+        <%= errMessage%>
+    </div>
+<%}%>
+
+<div style="margin: 0 auto;width: 70%;margin-top: 20px">
+    <div style="text-align: center;border-bottom: 1px solid rgba(216,216,216,0.5);height: 43px">
+        <ul style="display: block;float: none;clear: both;margin: 0 auto;padding: 0px;width: 250px">
+            <li style="float: left;display: inline-block;padding: 0 20px;border-bottom: 3px solid #14bef0">
+                <a href="/login" style="color: #14bef0;;padding: 10px;margin: 0;float: left;display: inline-block">Doctor Login</a>
+            </li>
+        </ul>
+    </div>
+</div>
+<div class="ui grid" style="margin: 0 auto;width: 70%;margin-top: 20px;height: 500px;">
+    <div class="eight wide column">
+        <img src="/practo.png" alt="bpositive">
+    </div>
+    <div class="eight wide column">
+        <form action="/doctor-login" method="POST" style="padding: 30px;border: 1px solid rgba(216,216,216,0.5);border-radius: 5px" class="ui form">
+            <div class="field">
+                <label style="color: #787887;font-weight: 400;display:inline">Username</label>
+                <a href="/login" style="float:right;color: #787887;cursor:pointer">Not a Doctor?</a>
+                <input name="username" placeholder="Email ID" type="text" required>
+            </div>
+            <div class="field">
+                <label style="color: #787887;font-weight: 400">Password</label>
+                <input name="password" placeholder="Password" type="password" required>
+            </div>
+            <button style="width: 100%;margin-top: 20px;font-size: 15px;background-color: #13bef0;color: white;padding: 15px;border-radius: 0px" class="ui button" type="submit">Login</button>
+        </form>
+    </div>
+</div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="/js/customjs.js"></script>
+<% include partials/footer.ejs%>

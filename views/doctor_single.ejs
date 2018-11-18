@@ -1,0 +1,972 @@
+<% include partials/header.ejs%>
+<title >Dr. <%=doctor.firstName.toLowerCase()%> <%=doctor.lastName.toLowerCase()%></title>
+</head>
+<body>
+
+<div class="navbar">
+                <div class="ui grid" style="height: 80px;border-bottom: 1px solid rgba(216,216,216,0.5);">
+                    <div class="eight wide column" style="height : 70px">
+                        <a href="/"><img style="margin-left : 60px;margin-top:10px" src="/bpositive.jpg" alt="logo" width="150px" height="50px"></a>
+                    </div>
+                    <div class="eight wide column">
+                        <%if(user != null){ %>
+                            <div style="margin-top: 20px;float: right;margin-right: 80px;" >
+                                <div style="text-transform: capitalize" id="sidebarBtn" class="text"> <i class="list layout icon"></i>
+                                    <%= user.fname%>&nbsp;<%= user.sname%>
+                                </div>
+                                <div class="ui sidebar right inverted vertical menu">
+                                    <a href="/profile" class="item">
+                                        <i class="doctor icon"></i>
+                                        Profile
+                                    </a>
+                                    <a href="#" class="item">
+                                        <i class="tasks icon"></i>
+                                        My Appointments
+                                    </a>
+                                    <a href="#" class="item">
+                                        <i class="edit icon"></i>
+                                        Edit/Update Profile
+                                    </a>
+                                    <a href="/logout" class="item">
+                                        <i class="sign out icon"></i>
+                                        Logout
+                                    </a>
+                                </div>
+                                <div class="pusher">
+                                     <!-- Site content !-->
+                                </div>
+                            </div>
+                        <%}else{%>
+                        <div style="margin-top: 10px;float: right;margin-right: 60px" class="ui buttons">
+                            <button style="border-radius: 0px" id="loginBtn" class="ui button red">Login</button>
+                                <div class="or"></div>
+                            <button style="border-radius: 0px" id="signUpBtn" class="ui teal button">Sign Up</button>
+                        </div>
+                        <%}%>
+                        <a href="/healthfeed" style="float: right;margin-top: 20px;margin-right: 30px;color: black">Read Health Articles</a>
+                    </div>
+                </div>
+</div>
+<div id="err" style="text-align: center; margin: 20px auto;padding: 20px; width: 60%; font-size: 20px;display: none" class="ui red inverted segment">
+    Oops Something went wrong!!!
+</div>
+
+<div id="err1" style="text-align: center; margin: 20px auto;padding: 20px; width: 60%; font-size: 20px;display: none" class="ui red inverted segment">
+    Problem and Experience cannot be Empty!!
+</div>
+
+<div style="background-color: #f0f0f5;margin-top: 14px">
+        <div style="width: 90%;margin: 0 auto;">
+            <p style="padding: 20px;color: #787887;font-size: 12px;letter-spacing: .3px"> <a class="headTag" href="/" style="color: #414146">Home  </a> ><a class="headTag" style="color: #414146" href="/search/<%= practice%>"><%= practice%>  </a>><a href="#" style="text-transform: capitalize;color: #414146;cursor: default"><%= doctor.firstName.toLowerCase()%> <%= doctor.lastName.toLowerCase()%></a></p>
+            <div class="ui grid" style="padding: 0px 25px 25px 25px">
+                <div style="padding: 20px" class="twelve wide column">
+                    <div style="background: white;box-shadow: 0 1px 2px 1px hsla(0,0%,43%,.14);margin-bottom: 30px" class="ui grid">
+                        <div class="three wide column" style="padding: 12px 0px 12px 12px">
+                            <div class="ui image">
+                                <img id="doc-img" style="width: 100px;height:100px;margin-left: 10px;border-radius: 5px" src="/images/uploads/<%= doctor.fileName%>">
+                            </div>
+                        </div>
+                        <% if(user != null){%>
+                        <div id="main" fname="<%= doctor.firstName%>" sname="<%= doctor.lastName%>" doc-fname="<%= user.fname%>" doc-sname="<%= user.sname%>" doc-id="<%= doctor.id%>" pic="<%= user.profilepic%>" provider="<%=user.provider %>"  class="thirteen wide column" style="padding: 12px 12px 12px 0px">
+                        <%}else{%>
+                        <div id="main" fname="<%= doctor.firstName%>" sname="<%= doctor.lastName%>" doc-fname="" doc-sname="" doc-id="<%= doctor.id%>" pic="" provider="" class="thirteen wide column" style="padding: 12px 12px 12px 0px">
+                        <%}%>
+                            <a class="docName" style="text-transform: capitalize;color: #414146;font-weight: bold;font-size: 25px;letter-spacing: .2px" >Dr. <%= doctor.firstName.toLowerCase()%> <%= doctor.lastName.toLowerCase()%>&nbsp; <span style="font-size: 13px;text-transform: none;letter-spacing: .3px;color: #787887;">Profile is claimed</span></a>
+                            <p style="margin-top: 10px;color: #414146;"><%= doctor.sdetails%> <br> <%= doctor.practice%></p>
+                            <p style="font-weight: bold;color: #414146"><%= doctor.housing%></p>
+
+                            <p style="color: #01a400;font-weight: bold;margin-bottom: 5px"><i class="checkmark icon"></i> Medical Registration Verified</p>
+                            <p style="color: #01a400;font-weight: bold;margin-bottom: 15px"><i class="thumbs up icon"></i>
+                                <% if(doctor.votes > 0) {%>
+                                    <%= ((doctor.totalvotes/(doctor.votes*5))*100).toFixed(0) %> % 
+                                    &nbsp;
+                                <% }%>
+                                <span style="color: #787887;font-size: 12px;font-weight: 100">(<%= doctor.votes%> votes)</span>
+                            </p>
+
+                            <p style="color: #414146">
+                                <%= doctor.about %>
+                            </p>
+
+                            <button id="feedbackBtn" style="background: white;color: #14bef0;border: 1px solid #14bef0;padding: 10px 50px 10px 50px;float: right" class="ui button">Give Feedback</button>
+    
+                        </div>
+                        
+                    </div>
+
+                    <div style="border: none;position: relative;left: -15px;margin-bottom: 0px" class="ui tabular menu">
+                        <a id="infoBtn" style="border: none;border-radius: 0px !important;font-size: 16px;font-weight: 700;color: #414146" class="active item">
+                          Info
+                        </a>
+                        <a id="feedbacks" style="border: none;border-radius: 0px !important;font-size: 16px;font-weight: 700;color: #414146" class="item">
+                          Feedback (<%= totalfeeds%>)
+                        </a>
+
+                        <%if(user != null) {%>
+                        <a id="chatBtn" user-id="<%= user.id%>" user_image="<%= user.profilepic%>" user_provider="<%= user.provider%>" user_fname = "<%= user.fname%>" user_sname="<%= user.sname%>" style="border: none;border-radius: 0px !important;font-size: 16px;font-weight: 700;color: #414146" class="item">
+                          Chat
+                        </a>
+                        <%}%>
+                    </div>
+
+                    <div id="info" class="ui grid" style="position: relative;left: -1px;top: 15px;background: white;width: 888px;">
+                        <div style="padding: 25px" class="six wide column">
+                            <p style="text-transform: capitalize;margin-bottom: 20px;color: #414146"><%= doctor.addressShort.toLowerCase()%></p>
+                            <p style="color: #14bef0;font-weight: 700;font-size: 13px;margin-bottom: 5px"><%= doctor.housing%></p>
+                            <p style="color: #414146"><%= doctor.address%></p>
+                            <a id="directions" style="color: #14bef0;font-weight: 700;cursor: pointer">Get Directions</a>
+                        </div>
+                        <div style="padding: 25px;color: #414146" class="five wide column">
+                            <h4 style="margin-bottom: 5px">Mon - Sat</h4>
+                            <p><%= doctor.timingMS%></p>
+
+                            <h4 style="margin-bottom: 5px">Sun</h4>
+                            <p><%= doctor.timingS%></p>
+                        </div>
+                        <div style="padding: 25px" class="five wide column">
+                            <p><i class="money icon"></i> Rs. <%= doctor.price%></p>
+                            <p><i class="phone icon"></i> <%= doctor.extension%> - <%= doctor.pNumber%></p>
+                            <button style="width: 100%;border-radius: 0px;background: white;padding: 5px;margin-top: 120px;color: #14bef0;border: 1px solid #14bef0" class="ui button b1">
+                                <i class="checkmark icon"></i>
+                                <span style="font-weight: bold">Book Appointment</span> <br>
+                                <span style="font-size: 12px">No booking fee</span>
+                            </button>
+
+                        </div>
+                    </div>
+
+                    <div id="feeds" style="position: relative;left: -15px;margin-top: 50px;background: white;width: 888px;padding-bottom: 20px">
+                        <h3 style="padding: 25px;color: #414146;border-bottom: 1px solid #f0f0f5">Feedback for Dr. <span style="text-transform: capitalize"><%= doctor.firstName.toLowerCase()%> <%= doctor.lastName.toLowerCase()%></span>
+                        </h3>
+                        <% if(feedbacks.length > 0){%>
+                        <% for(let i=0;i<feedbacks.length;i++){ %>
+                            <div class="ui grid" style="position: relative;left: 14px;background: white;width: 888px;min-height: 250px;padding: 0px 25px 25px 25px">
+                                <div style="padding: 10px;border-bottom: 1px solid #f0f0f5" class="two wide column">
+                                    <% if(feedbacks[i].provider == 'google' && feedbacks[i].profilepic != ''){%>
+                                       <img style="border-radius: 50%;margin-left: 10px;margin-top: 10px" width="50%" src="<%=feedbacks[i].profilepic%>">
+                                    <%}else{%>
+                                       <img style="border-radius: 50%;margin-left: 10px;margin-top: 10px" width="50%" src="/images/uploads/<%=feedbacks[i].profilepic%>">
+                                    <%}%>
+                                </div>
+                                <div style="padding: 20px 0px 0px 10px;color: #414146;border-bottom: 1px solid #f0f0f5" class="fourteen wide column">
+                                    <h4 style="color: #787887;text-transform: capitalize"><%= feedbacks[i].uid%> (verified)
+                                        <% if(user != null && user.id == feedbacks[i].user_id){%>
+                                            <span style="float: right"><i data-rating="<%= feedbacks[i].rating%>" data-experience="<%= feedbacks[i].experience%>" data-problem="<%= feedbacks[i].problem%>" data-id="<%=feedbacks[i].id %>" class=" edit icon"></i> <i id="delete" data-rating="<%= feedbacks[i].rating%>" data-id="<%=feedbacks[i].id %>" doc-id="<%=doctor.id %>" class=" remove sign icon delete"></i></span>
+                                        <%}%>
+                                    </h4>
+                                    <h3 style="margin-top: 20px;text-transform: capitalize;color: #414146"><%= feedbacks[i].problem%></h3>
+    
+                                    <% if(feedbacks[i].rating >= 3){%>
+                                        <p style="letter-spacing: .2px;margin-top: 20px"><i style="color: green" class="thumbs up icon"></i>  I recommend the doctor</p>
+                                    <%}else{%>
+                                        <p style="letter-spacing: .2px;margin-top: 20px"><i style="color: red" class="thumbs down icon"></i>  I don't recommend the doctor</p>
+                                    <%}%>
+                                    <p style="color: #414146;padding: 0px 10px 10px 0px;font-size: 14px;letter-spacing: .3px;margin-top: 20px"><%= feedbacks[i].experience%></p>
+                                </div>
+                            </div>
+                           
+                        <%}%>
+                        <%}%>
+                        <% if(totalfeeds - 5 > 0){ %>
+                            <button id="allfeedbacksBtn" style="margin: 20px 0px 0px 40%;background: white;color: #14bef0;border: 1px solid #14bef0" class="ui button" href="">Show all feedbacks (<%= totalfeeds%>)</button>
+                        <%}%>
+                        
+                    </div>
+                    
+                    <%if(feedbacks.length == 5){%>
+                        <button id="loadMoreBtn" style="margin: 20px 0px 20px 45%;border-radius: 0px;background: white;padding: 15px;color: #14bef0;border: 1px solid #14bef0;display: none" class="ui button">Load More</button>
+                    <%}%>
+
+                    <div id="servicesFeed" style="position: relative;left: -15px;margin-top: 50px;background: white;width: 888px">
+                        <div id="services" style="padding: 20px">
+                            <h3 style="color: #414146;padding: 5px">Services</h3>
+                            <div style="padding: 5px 5px 20px 5px;border-bottom: 1px solid #f0f0f5">
+                                <% let services = doctor.services.split(";") %>
+                                <% for(let i=0;i<services.length;i++) {%>
+                                    <a style="margin-bottom: 10px;margin-right: 10px" class="ui  tag label"><%= services[i]%></a>
+                                <% }%>
+                            </div>
+                        </div>
+
+                        <div class="ui grid">
+                           <div style="padding-left: 40px" class="eight wide column">
+                               <h3 style="color: #414146">Specializations</h3>
+                               <div style="padding: 5px 5px 20px 5px;">
+                                    <% let specializations = doctor.specializations.split(";") %>
+                                    <% for(let i=0;i<specializations.length;i++) {%>
+                                        <a style="margin-bottom: 10px;margin-right: 10px" class="ui  tag label"><%= specializations[i]%></a>
+                                    <% }%>
+                                </div>
+
+                                <h3 style="color: #414146;border-top: 1px solid #f0f0f5;padding-top: 30px">Memberships</h3>
+                                <div style="padding: 5px 5px 20px 5px;">
+                                    <% let memberships = doctor.memberships.split(";") %>
+                                    <% for(let i=0;i<memberships.length;i++) {%>
+                                        <a style="margin-bottom: 10px;margin-right: 10px" class="ui  tag label"><%= memberships[i]%></a>
+                                    <% }%>
+                                </div>
+
+                                <h3 style="color: #414146;border-top: 1px solid #f0f0f5;padding-top: 30px">Registrations</h3>
+                                <div style="padding: 5px 5px 20px 5px;">
+                                    <% let Registrations = doctor.registrations.split(";") %>
+                                    <% for(let i=0;i<Registrations.length;i++) {%>
+                                        <a style="margin-bottom: 10px;margin-right: 10px" class="ui  tag label"><%= Registrations[i]%></a>
+                                    <% }%>
+                                </div>
+                           </div> 
+                           <div class="eight wide column">
+                                <h3 style="color: #414146;">Educations</h3>
+                                <div style="padding: 5px 5px 20px 5px;">
+                                     <% let educations = doctor.educations.split(";") %>
+                                     <% for(let i=0;i<educations.length;i++) {%>
+                                         <a style="margin-bottom: 10px;margin-right: 10px" class="ui  tag label"><%= educations[i]%></a>
+                                     <% }%>
+                                 </div>
+
+                                <h3 style="color: #414146;border-top: 1px solid #f0f0f5;padding-top: 30px">Experience</h3>
+                                <div style="padding: 5px 5px 20px 5px;">
+                                     <% let Experience = doctor.experience.split(";") %>
+                                     <% for(let i=0;i<Experience.length;i++) {%>
+                                         <a style="margin-bottom: 10px;margin-right: 10px" class="ui  tag label"><%= Experience[i]%></a>
+                                     <% }%>
+                                 </div>
+                                 
+                           </div> 
+                        </div>
+                    </div>
+
+                    <div id="chat"  style="position: relative;left: -15px;margin-top: 50px;background: white;width: 888px;margin-top:0px;display:none">
+                      <div style="height:500px;background-color:#e9ecf2;overflow-y:scroll" id="messages">
+                          
+                      </div> 
+
+                      <div class="ui fluid icon input">
+                            <input id="messageInput" style="padding:20px;border-radius:0px" placeholder="Type your message..." type="text">
+                            <i style="font-size:20px;" class="play basic icon"></i>
+                     </div>
+                      
+                    </div>
+
+                    <div id="mapModal" class="ui basic modal">
+                        <div class="ui icon header">
+                            <i class="map icon"></i>
+                            <%= doctor.housing%>
+                        </div>
+                        <div lat="<%= doctor.latitude%>" long="<%= doctor.longitude%>" style="height: 500px" id="map" class="content">
+                        </div>
+                        <div class="actions">
+                            <div class="ui red basic cancel inverted button">
+                                <i class="remove icon"></i>
+                                Close
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="feedForm" class="ui modal">
+                        <i class="close icon"></i>
+                            <div class="header">
+                              Feedback
+                            </div>
+                        <div class="image content">
+                            <div class="ui medium image">
+                                <% if(user != undefined && user.provider == 'google'){%>
+                                    <img style="border-radius: 50%" width="80%" src="<%=user.profilepic%>">
+                                <%}else if(user != undefined){%>
+                                    <img style="border-radius: 50%" width="80%" src="/images/uploads/<%=user.profilepic%>">
+                                <%}else{%> 
+                                    <img style="border-radius: 50%" width="80%" src="/images/uploads/default-profile-picture.png">
+                                <%}%>
+                            </div>
+                            <div class="description">
+                                <div style="margin-bottom: 5px" class="ui header">How was your appointment experience with Dr. <%= doctor.firstName%> <%= doctor.lastName%> ?</div>
+                                <p style="color: #787887;">Your feedback will help over 1 lac people choose the right doctor, daily.</p>
+                                
+                                <div style="margin-top: 30px">
+                                    <p style="font-weight: bold"><span style="color: #ff7800;">Q1. </span> &nbsp; Please give the rating to the doctor!</p>
+                                    <div id="frating" style="margin-left: 30px;margin-bottom: 30px" class="ui star rating" data-rating="3"></div>
+
+                                    <p style="font-weight: bold"><span style="color: #ff7800;">Q2. </span> &nbsp; For which health problem/treatment did you visit?</p>
+                                    <div style="margin-left: 30px;margin-bottom: 30px" class="ui input">
+                                        <input id="problem" placeholder="Enter your problem" type="text">
+                                    </div>
+
+                                    <p style="font-weight: bold;margin-bottom: 0px"><span style="color: #ff7800;">Q3. </span> &nbsp; Tell us about your experience with the doctor.</p>
+                                    <span style="color: #787887;margin-left: 30px">eg. Share relevant stories which made you appreciate 'doctor friendliness.</span>
+
+                                    <div style="margin-left: 30px;margin-top: 30px" class="ui form">
+                                        <div class="field">
+                                            <textarea id="experience" placeholder="Start typing here...."></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="actions">
+                            <div class="ui black deny button">
+                                Cancel
+                            </div>
+                            <div id="submitBtn" class="ui positive right labeled icon button">
+                                Submit
+                            <i class="checkmark icon"></i>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+
+
+
+                    <div id="feedForm1" class="ui modal">
+                            <i class="close icon"></i>
+                                <div class="header">
+                                  Feedback
+                                </div>
+                            <div class="image content">
+                                <div class="ui medium image">
+                                    <% if(user != undefined && user.provider == 'google'){%>
+                                        <img style="border-radius: 50%" width="80%" src="<%=user.profilepic%>">
+                                    <%}else if(user != undefined){%>
+                                        <img style="border-radius: 50%" width="80%" src="/images/uploads/<%=user.profilepic%>">
+                                    <%}else{%> 
+                                        <img style="border-radius: 50%" width="80%" src="/images/uploads/default-profile-picture.png">
+                                    <%}%>
+                                </div>
+                                <div class="description">
+                                    <div style="margin-bottom: 5px" class="ui header">How was your appointment experience with Dr. <%= doctor.firstName%> <%= doctor.lastName%> ?</div>
+                                    <p style="color: #787887;">Your feedback will help over 1 lac people choose the right doctor, daily.</p>
+                                    
+                                    <div style="margin-top: 30px">
+                                        <p style="font-weight: bold"><span style="color: #ff7800;">Q1. </span> &nbsp; Please give the rating to the doctor!</p>
+                                        <div id="edit_rating" style="margin-left: 30px;margin-bottom: 30px" class="ui star rating" data-rating="3"></div>
+    
+                                        <p style="font-weight: bold"><span style="color: #ff7800;">Q2. </span> &nbsp; For which health problem/treatment did you visit?</p>
+                                        <div style="margin-left: 30px;margin-bottom: 30px" class="ui input">
+                                            <input id="edit_problem" placeholder="Enter your problem" type="text">
+                                        </div>
+    
+                                        <p style="font-weight: bold;margin-bottom: 0px"><span style="color: #ff7800;">Q3. </span> &nbsp; Tell us about your experience with the doctor.</p>
+                                        <span style="color: #787887;margin-left: 30px">eg. Share relevant stories which made you appreciate 'doctor friendliness.</span>
+    
+                                        <div style="margin-left: 30px;margin-top: 30px" class="ui form">
+                                            <div class="field">
+                                                <textarea id="edit_experience" placeholder="Start typing here...."></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="actions">
+                                <div class="ui black deny button">
+                                    Cancel
+                                </div>
+                                <div doc-id=<%= doctor.id%> data-id="" id="saveBtn" class="ui positive right labeled icon button">
+                                    Save Changes
+                                <i class="checkmark icon"></i>
+                                </div>
+                            </div>
+                    </div>
+
+                    <div id="removeModal" class="ui basic modal">
+                        <div class="ui icon header">
+                          <i class="archive icon"></i>
+                          Delete this Feedback
+                        </div>
+                        <div class="content">
+                          <p style="text-align: center">Are you sure to delete this feedback? Once done it cannot be undone!!</p>
+                        </div>
+                        <div class="actions">
+                          <div class="ui red basic cancel inverted button">
+                            <i class="remove icon"></i>
+                            No
+                          </div>
+                          <div id="deleteBtn"  class="ui green ok inverted button">
+                            <i class="checkmark icon"></i>
+                            Yes
+                          </div>
+                        </div>
+                      </div>
+
+                    </div>
+
+
+                    <div style="padding: 0px 10px 10px 10px" class="four wide column">
+                        <h2 style="text-align: center">Top Health Articles</h2>
+                        <div class="loader1">Loading...</div>
+                        <div id="articles" class="ui items">
+                            
+                        </div>
+                        <button id="moreArticles" style="margin-left: 80px;border-radius: 0px;display: none" class="ui primary button">
+                            More Articles
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+       </div>
+</div>
+
+
+
+
+
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.3/semantic.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=
+AIzaSyCKuJ6PjFKFWFuLG2IHl9xWXV01TelKpdI&callback=initMap"
+    async defer></script>
+<script src="/js/socket-io.js"></script>
+<script src="/js/customjs.js"></script>
+<script>
+    
+    $('.dropdown')
+     .dropdown()
+     ;
+
+     $('#feedbackBtn, .b1 , #loadMoreBtn, #allfeedbacksBtn').mouseover(function() {
+        $(this).css({"background-color" : "#14bef0","color" : "white"});
+    }).mouseout(function() {
+        $(this).css({"background-color" : "white","color" : "#14bef0"});
+    });
+
+    $(".headTag, #directions").mouseover(function() {
+        $(this).css("text-decoration","underline");
+    }).mouseout(function() {
+        $(this).css("text-decoration","none");
+    });
+
+    $('.active').css("color","#14bef0")
+    $('.item').click(function(){
+        $('.active').css('color','#414146');
+        $('.active').removeClass('active');
+        $(this).addClass('active');
+        $(this).css('color','#14bef0');
+    });
+
+    $('#directions').click(function(){
+        $('#mapModal')
+        .modal('show')
+        ;
+    });
+
+    let latitude = $('#map').attr('lat');
+    let longitude = $('#map').attr('long');
+
+    //console.log(latitude + " " + longitude)
+
+    function initMap() {
+        var myLatLng = {lat: parseInt(latitude), lng: parseInt(longitude)};
+
+        // Create a map object and specify the DOM element
+        // for display.
+        var map = new google.maps.Map(document.getElementById('map'), {
+          center: myLatLng,
+          zoom: 4
+        });
+
+        // Create a marker and set its position.
+        var marker = new google.maps.Marker({
+          map: map,
+          position: myLatLng
+        });
+    };
+
+    $('.rating')
+    .rating({
+        initialRating: 2,
+        maxRating: 5
+    });
+
+    $('#feedbackBtn').click(function(){
+        $('#feedForm').modal('show');
+    });
+
+
+    let id = $('#main').attr('doc-id');
+    let user_id = $('#chatBtn').attr('user-id');
+    var socket = io('http://127.0.0.1:4000',{
+        query: {
+            user_id : user_id
+        }
+    });
+    socket.on('error',function(){
+        $('#err').css('display','block');
+        $('#err').fadeOut(5000);
+    });
+
+
+    socket.on('reload',function(){
+        location.reload();
+    });
+
+    $('#messageInput').keypress(function(){
+        socket.emit('userTyping',{
+            doc_id : id
+        });
+    });
+    $('#messageInput').keyup(function(){
+        if($('#messageInput')[0].value.length == 0){
+        socket.emit('userKeyUp',{
+            doc_id : id
+        });
+        }
+    });
+
+    $('#submitBtn').click(function(){
+        let problem = $('#problem').val();
+        let experience = $('#experience').val();
+        let rating = $('#frating').rating('get rating');
+        let doc_fname = $('#main').attr('doc-fname');
+        let doc_sname =$('#main').attr('doc-sname');
+        let doc_id =$('#main').attr('doc-id');
+        let pic =$('#main').attr('pic');
+        let provider =$('#main').attr('provider');
+        $('#problem').val('');
+        $('#experience').val('');
+
+        if(problem != '' && experience != ''){
+            $.ajax({
+            type: "POST",
+            url: "/submitFeedback",
+            data: {},
+            cache: false,
+            success: function(data){
+               if(data.loggedIn != undefined){
+                   window.location = "/login";
+               }else if(data.error == false){
+                   socket.emit('submitFeedback',{
+                        problem:problem,
+                        experience: experience,
+                        rating : rating,
+                        doc_fname : doc_fname,
+                        doc_sname : doc_sname,
+                        doc_id : doc_id,
+                        pic : pic,
+                        provider : provider,
+                        user_id  : data.id
+                   });
+               }
+            }
+        });
+        }else{
+            $('#err1').css('display','block');
+            $('#err1').fadeOut(5000);
+        }
+
+    });
+
+        var prating = 0;
+        $(document).on('click','.edit',function(){
+            console.log(this)
+            let rating = $(this).attr('data-rating');
+            let problem = $(this).attr('data-problem');
+            let experience = $(this).attr('data-experience');
+            let id = $(this).attr('data-id');
+            prating = rating;
+
+            
+            $('#edit_problem').val(problem);
+            $('#edit_experience').val(experience);
+            $('#saveBtn').attr('data-id',id);
+
+            $('#feedForm1').modal('show');
+
+        });
+
+        $(document).on('click','#saveBtn',function(){
+            let problem = $('#edit_problem').val();
+            let experience = $('#edit_experience').val();
+            let rating = $('#edit_rating').rating('get rating');
+            let id = $(this).attr('data-id');
+            let doc_id = $(this).attr('doc-id');
+            $('#problem').val('');
+            $('#experience').val('');
+            let location = window.location;
+
+            if(problem != '' && experience != ''){
+                $.ajax({
+                type: "POST",
+                url: "/editFeedback",
+                data: {
+                    problem:problem,
+                    experience: experience,
+                    rating : rating,
+                    id : id,
+                    prating : prating,
+                    doc_id : doc_id
+                },
+                cache: false,
+                success: function(data){
+                if(data.loggedIn != undefined){
+                    window.location = "/login";
+                }else if(data.error == true){
+                    $('#err').css('display','block');
+                    $('#err').fadeOut(5000);
+                }else{
+                    window.location = location;
+                }
+                }
+            });
+            }else{
+                $('#err1').css('display','block');
+                $('#err1').fadeOut(5000);
+            }
+
+        });
+
+    
+    
+        $(document).on('click','.delete',function(){
+            let fid = $(this).attr('data-id');
+            let rating = $(this).attr('data-rating');
+            let doc_id = $(this).attr('doc-id');
+
+            $('#deleteBtn').attr('fid',fid);
+            $('#deleteBtn').attr('rating',rating);
+            $('#deleteBtn').attr('doc_id',doc_id);
+            $('#removeModal').modal('show');
+        });
+
+
+        $(document).on('click','#delete',function(){
+        let fid = $(this).attr('fid');
+        let rating = $(this).attr('rating');
+        let doc_id = $(this).attr('doc_id');
+
+        $.ajax({
+            type: "POST",
+            url: "/deleteFeedback",
+            data: {
+                fid:fid,
+                rating:rating,
+                doc_id :doc_id
+            },
+            cache: false,
+            success: function(data){
+               if(data.loggedIn != undefined){
+                   window.location = "/login";
+               }else if(data.error == true){
+                $('#err').css('display','block');
+                $('#err').fadeOut(5000);
+               }else{
+                   window.location = location;
+               }
+            }
+        });
+    });
+
+
+
+    $(".edit").hover(function(){
+        $(this).css({
+            "color" : "teal",
+            "cursor" : "pointer"
+        });
+    }, function(){
+        $(this).css({
+            "color" : "#787887",
+            "cursor" : "none"
+        });
+    });
+
+    $(".delete").hover(function(){
+        $(this).css({
+            "color" : "red",
+            "cursor" : "pointer"
+        });
+    }, function(){
+        $(this).css({
+            "color" : "#787887",
+            "cursor" : "none"
+        });
+    });
+
+    $.get('https://newsapi.org/v2/everything?language=en&q="health"&sortBy=relavancy&pageSize=10&page=1&apiKey=b997b94e71284df4980207822bbba1d2',function(data,status){
+        $('.loader1').remove();
+        let appendable = "";
+            for(let i=0;i<data.articles.length;i++){
+                let app= `
+                    <div style="padding: 10px 20px 20px 20px;background-color:white" class="item animated zoomIn delay-2s">
+                        <div style="max-width:80px" class="image">
+                        <img src=${data.articles[i].urlToImage}>
+                        </div>
+                        <div class="content">
+                        <a href=${data.articles[i].url} target="_blank" style="font-size:14px" class="header">${data.articles[i].title}</a>
+                        <div class="meta">
+                            <span>${data.articles[i].author}</span>
+                        </div>
+                        </div>
+                    </div>
+                `;
+
+                appendable += app;
+            }
+            $('#articles').append(appendable);
+            $('#moreArticles').css("display","block");
+    });
+    $('#moreArticles').click(function(){
+        window.location = '/healthfeed';
+    });
+
+    var start = 5;
+    $('#feedbacks').click(function(){
+        start = 5;
+        $('#info').css("display","none");
+        $('#chat').css("display","none");
+        $('#allfeedbacksBtn').css("display","none");
+        $('#servicesFeed').css("display","none");
+        $('#feeds').css({
+            "margin-top" : "0px"
+        });
+        $('#loadMoreBtn').css("display","block");
+        $('#feeds').css("display","block");
+        let mfeeds = `
+            <div id="moreFeedback">
+                <div style="display: none" class="loader2">Loading...</div>  
+            </div>
+        `;
+        $('#feeds').append(mfeeds);
+    });
+    $('#infoBtn').click(function(){
+
+        $('#info').css("display","flex");
+        $('#chat').css("display","none");
+        $('#allfeedbacksBtn').css("display","block");
+        $('#servicesFeed').css("display","block");
+        $('#feeds').css({
+            "margin-top" : "50px"
+        });
+        $('#moreFeedback').remove();
+        $('#loadMoreBtn').css("display","none");
+    });
+
+    $('#chatBtn').click(function(){
+        $("#chat").css("display","block");
+        $('#servicesFeed').css("display","none");
+        $('#info').css("display","none");
+        $('#feeds').css("display","none");
+        $('#loadMoreBtn').css("display","none");
+        $('#messages').append('<div id="chatLoader" style="margin-top:50px" class="ui active centered inline loader"></div>');
+        $('#videoBar').remove();
+
+        let doc_image = $('#doc-img').attr('src');
+        let doc_id = $('#main').attr('doc-id');
+        let user_id = $('#chatBtn').attr('user-id');
+        let image = $('#chatBtn').attr('user_image');
+        let provider = $('#chatBtn').attr('user_provider');
+        let user_fname = $('#chatBtn').attr('user_fname');
+        let user_sname = $('#chatBtn').attr('user_sname');
+        if(provider == 'local'){
+            image = "/images/uploads/" + $('#chatBtn').attr('user_image');
+        }
+        $.ajax({
+            type : 'GET',
+            url : '/getChats',
+            data : {
+                doc_id : doc_id,
+                user_id : user_id
+            },
+            cache : false,
+            success : function(data){
+                if(data.isLoggedIn != undefined){
+                    window.location = '/login';
+                }else{
+                    $('#chatLoader').remove();
+                    $('#chat').prepend(`<div id="videoBar" style="padding:20px;background-color:#e9ecf2;border-bottom: #d6d7da 1px solid">
+                        <i style="font-size:20px;color:#80858b;cursor:pointer;margin-left:830px" class="facetime video icon"></i>
+                        <span style="float:left;position:relative;top:-20px" id="typing"></span>
+                    </div>`);
+                    let fname = $('#main').attr('fname');
+                    let sname = $('#main').attr('sname');
+                    let app = "";
+
+                    for(let i=0;i<data.conv.length;i++){
+                        if(data.conv[i].sender_id == doc_id){
+                            app += `<div style="width:50%;margin-top:0px;min-height:80px;margin:20px" class="ui grid">
+                            <div style="padding:0px;text-align:center" class="three wide column">
+                              <img style="width:30px;border-radius:50px" src="${doc_image}">
+                              <p style="color:#696e72;font-size:11px;text-transform: capitalize">${fname} ${sname}</p>
+                            </div>
+                            <div style="background-color:white;border-radius:5px;padding:20px" class="thirteen wide column">
+                              <p style="padding:10px;color:dimgrey;word-break: break-all">${data.conv[i].message}</p>
+                            </div>
+                        </div>`;
+                        }else{
+                           app += `<div style="width:50%;margin-top:0px;min-height:80px;margin:20px;float:right" class="ui grid">
+                            <div style="background-color:#0084ff;border-radius:5px;padding:20px" class="thirteen wide column">
+                              <p style="padding:10px;color:white;word-break: break-all">${data.conv[i].message}</p>
+                            </div>
+                            <div style="padding:0px;text-align:center" class="three wide column">
+                              <img style="width:30px;border-radius:50px" src="${image}">
+                              <p style="color:#696e72;font-size:11px;text-transform: capitalize;">${user_fname} ${user_sname}</p>
+                            </div>
+                          </div>`;
+                        }
+                        $('#messages').append(app);
+                        app = '';
+                        $('#messages').scrollTop($('#messages').scrollTop()+1000);
+                    }
+
+
+
+
+
+
+
+
+                    socket.on('docTyping',function(){
+                        let html = `<p style="color:#696e72" id="typingMessage"><span style="font-weight:800;text-transform:capitalize;">Dr. ${fname} ${sname}</span> is typing...</p>`;
+                        $('#typing').html(html);
+                    });
+                    socket.on('docKeyUp',function(){
+                        $('#typing').html('');
+                    });
+
+                    socket.on('acknowledge',function(data){
+                        if(data.doc_id == doc_id){
+                            let appendable = `<div style="width:50%;margin-top:0px;min-height:80px;margin:20px" class="ui grid">
+                                <div style="padding:0px;text-align:center" class="three wide column">
+                                <img style="width:30px;border-radius:50px" src="${data.image}">
+                                <p style="color:#696e72;font-size:11px;text-transform: capitalize">${fname} ${sname}</p>
+                                </div>
+                                <div style="background-color:white;border-radius:5px;padding:20px" class="thirteen wide column">
+                                <p style="padding:10px;color:dimgrey;word-break: break-all">${data.message}</p>
+                                </div>
+                            </div>`;
+
+                            $('#messages').append(appendable);
+                            $('#messages').scrollTop($('#messages').scrollTop()+1000);
+                        }
+                    });
+
+                    $('#messageInput').keypress(function(e){
+                        if(e.which == 13){
+                            let message = $('#messageInput').val();
+                            $('#messageInput').val('');
+                            socket.emit('userMessage',{
+                                user_id : user_id,
+                                doc_id : doc_id,
+                                message : message,
+                                image : image
+                            });
+
+                            let appendable = `<div style="width:50%;margin-top:0px;min-height:80px;margin:20px;float:right" class="ui grid">
+                            <div style="background-color:#0084ff;border-radius:5px;padding:20px" class="thirteen wide column">
+                              <p style="padding:10px;color:white;word-break: break-all">${message}</p>
+                            </div>
+                            <div style="padding:0px;text-align:center" class="three wide column">
+                              <img style="width:30px;border-radius:50px" src="${image}">
+                              <p style="color:#696e72;font-size:11px;text-transform: capitalize;">${user_fname} ${user_sname}</p>
+                            </div>
+                          </div>`;
+
+                          $('#messages').append(appendable);
+                          $('#messages').scrollTop($('#messages').scrollTop()+1000);
+                        }
+                    });
+                }
+            }
+        });
+
+    });
+
+    $('#loadMoreBtn').click(function(){
+        $('.loader2').css('display','block');
+        let doc_id =$('#main').attr('doc-id');
+        $.ajax({
+            url: '/getFeedbacks',
+            data: {
+                offset : start,
+                doc_id : doc_id
+            },
+            success: function(data){
+                start += 5;
+                $('.loader2').css('display','none');
+                let app = '';
+                for(let i=0;i<data.feedbacks.length;i++){
+                    let temp = `
+                            <div class="ui grid animated fadeIn delay-2s" style="position: relative;left: 14px;background: white;width: 888px;min-height: 250px;padding: 0px 25px 25px 25px">
+                                <div style="padding: 10px;border-bottom: 1px solid #f0f0f5" class="two wide column">
+                            `;
+                    if(data.feedbacks[i].provider == 'google'){
+                        temp += `<img style="border-radius: 50%;margin-left: 10px;margin-top: 10px" width="50%" src="${data.feedbacks[i].profilepic}">
+                                </div>
+                        `;
+                    }else{
+                        temp += `<img style="border-radius: 50%;margin-left: 10px;margin-top: 10px" width="50%" src="/images/uploads/${data.feedbacks[i].profilepic}">
+                                </div>
+                        `;
+                    }
+                    temp += `
+                            <div style="padding: 20px 0px 0px 10px;color: #414146;border-bottom: 1px solid #f0f0f5" class="fourteen wide column">
+                            <h4 style="color: #787887;text-transform: capitalize">${data.feedbacks[i].uid} (verified)
+                    `;
+
+                    if(data.user != null && data.user.id == data.feedbacks[i].user_id){
+                        temp += `
+                         <span style="float: right"><i data-rating=${data.feedbacks[i].rating} data-experience="${data.feedbacks[i].experience}" data-problem="${data.feedbacks[i].problem}" data-id="${data.feedbacks[i].id}" class=" edit icon"></i> <i id="delete" data-rating="${data.feedbacks[i].rating}" data-id="${data.feedbacks[i].id}" doc-id="${data.feedbacks[i].doc_id}" class=" remove sign icon delete"></i></span>
+                        `;
+                    }
+                    temp +=  `
+                           </h4>
+                           <h3 style="margin-top: 20px;text-transform: capitalize;color: #414146">${data.feedbacks[i].problem}</h3>
+                    `;
+
+                    if(data.feedbacks[i].rating >= 3){
+                        temp += `
+                         <p style="letter-spacing: .2px;margin-top: 20px"><i style="color: green" class="thumbs up icon"></i>  I recommend the doctor</p>
+                        `;
+                    }else{
+                        temp += `
+                        <p style="letter-spacing: .2px;margin-top: 20px"><i style="color: red" class="thumbs down icon"></i>  I don't recommend the doctor</p>
+                        `;
+                    }
+                    temp += `
+                        <p style="color: #414146;padding: 0px 10px 10px 0px;font-size: 14px;letter-spacing: .3px;margin-top: 20px">${data.feedbacks[i].experience}</p>
+                        </div>
+                        </div>
+                    `;
+                    app += temp;
+                }
+                
+                $('#moreFeedback').append(app);
+                if(data.feedbacks.length < 5){
+                    $('#loadMoreBtn').css("display","none");
+                }
+                $(".edit").hover(function(){
+                $(this).css({
+                        "color" : "teal",
+                        "cursor" : "pointer"
+                    });
+                }, function(){
+                    $(this).css({
+                        "color" : "#787887",
+                        "cursor" : "none"
+                    });
+                });
+
+                $(".delete").hover(function(){
+                    $(this).css({
+                        "color" : "red",
+                        "cursor" : "pointer"
+                    });
+                }, function(){
+                    $(this).css({
+                        "color" : "#787887",
+                        "cursor" : "none"
+                    });
+                });
+            }
+        });
+    });
+
+    $('#allfeedbacksBtn').click(function(){
+        $('#feedbacks').click();
+    })
+
+</script>
+<% include partials/footer.ejs%>
